@@ -2,9 +2,9 @@ import type { SectorDemoFaqItem } from '../sectorDemos/types';
 
 /**
  * Municipalities the repairs demo can name.
- * Repairs lives at `/reparaciones/${slug}` (for example `/reparaciones/torrejon-de-ardoz`).
- * Psychology lives at `/psicologia/${slug}`. A psychology slug that is not listed
- * here still becomes the city name. An unlisted repairs slug renders the generic copy.
+ * Repairs lives at `/reparaciones/${slug}` and psychology at `/psicologia/${slug}`.
+ * A slug that is not listed here still becomes the city name. Listed slugs keep
+ * their written name, area and nearby towns.
  *
  * To add a city: append a key here. No new page, project, or component.
  * `zonas` are nearby municipalities used only as an illustrative service area.

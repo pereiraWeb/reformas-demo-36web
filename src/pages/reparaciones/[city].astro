@@ -3,7 +3,8 @@ import SectorDemoPage from '../../components/sector-demo/SectorDemoPage.astro';
 import { buildReparacionesDemo } from '../../config/localDemos/reparaciones';
 
 /**
- * On demand so an unknown city still renders the repairs demo.
+ * On demand. The city name is read from the URL segment, so
+ * `/reparaciones/getafe` is Getafe without adding it to a list.
  * `noindex, nofollow` come from the shared layout. The route is not
  * prerendered, so it stays out of the sitemap.
  */

@@ -1,5 +1,5 @@
 import type { SectorDemoConfig, SectorDemoFaqItem, SectorDemoIconCard, SectorDemoImageCard } from '../sectorDemos/types';
-import { getCityConfig, type CityConfig } from './cities';
+import { resolveCity } from './cities';
 
 /**
  * Shared repairs demo. City-specific sentences are applied in
@@ -91,7 +91,9 @@ function serviceItems(ciudad: string | undefined): SectorDemoImageCard[] {
 	];
 }
 
-function zoneItems(city: CityConfig | undefined): SectorDemoIconCard[] {
+type ResolvedCity = NonNullable<ReturnType<typeof resolveCity>>;
+
+function zoneItems(city: ResolvedCity | undefined): SectorDemoIconCard[] {
 	if (!city) {
 		return [
 			{
@@ -116,10 +118,12 @@ function zoneItems(city: CityConfig | undefined): SectorDemoIconCard[] {
 	];
 }
 
-function faqItems(city: CityConfig | undefined): SectorDemoFaqItem[] {
+function faqItems(city: ResolvedCity | undefined, slug: string): SectorDemoFaqItem[] {
 	const where = city
-		? `En este ejemplo, por ${city.ciudad} y alrededores del ${city.area}: ${listInSpanish(city.zonas)}. Es una zona ilustrativa, no una cartera de clientes.`
-		: 'Esta URL no está asociada a un municipio. La demo no nombra una ciudad ni un área de desplazamiento.';
+		? city.area && city.zonas.length > 0
+			? `En este ejemplo, por ${city.ciudad} y alrededores del ${city.area}: ${listInSpanish(city.zonas)}. Es una zona ilustrativa, no una cartera de clientes.`
+			: `Esta URL usa ${city.ciudad} como municipio de ejemplo. El nombre sale de la dirección /reparaciones/${slug}. No hay un negocio ni una dirección en ${city.ciudad}.`
+		: 'Esta dirección no trae un nombre de ciudad. La demo no nombra un municipio ni un área de desplazamiento.';
 
 	const localBusinessQuestion = city
 		? `¿Esta página es la web de una empresa de ${city.ciudad}?`
@@ -152,22 +156,31 @@ function faqItems(city: CityConfig | undefined): SectorDemoFaqItem[] {
 		},
 	];
 
-	return city?.faq ? [...common, ...city.faq] : common;
+	if (!city) return common;
+
+	return [
+		...common,
+		{
+			question: `¿Por qué esta página habla de ${city.ciudad}?`,
+			answer: `Porque la URL es /reparaciones/${slug}. El nombre de la ciudad sale de esa dirección. No hay un negocio, un teléfono ni una dirección reales asociados a ${city.ciudad}.`,
+		},
+	];
 }
 
 /**
- * Builds the repairs demo for a URL slug.
- * A slug missing from `CITY_CONFIG` returns the same page with generic copy.
+ * Builds the repairs demo for any URL slug.
+ * `/reparaciones/getafe` names Getafe even when that municipality is not listed
+ * in `CITY_CONFIG`. A listed slug keeps its accents, area and nearby towns.
  */
 export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfig; pagePath: string } {
-	const slug = citySlug.trim().toLowerCase();
-	const city = getCityConfig(slug);
-	const contactHref = reparacionesContactHref(city ? slug : undefined);
+	const city = resolveCity(citySlug);
+	const slug = city?.slug ?? citySlug.trim().toLowerCase();
+	const contactHref = reparacionesContactHref(slug || undefined);
 	const pagePath = `/reparaciones/${slug}`;
 
 	const heroTitle = city ? `Reparaciones y mantenimiento en ${city.ciudad}` : 'Reparaciones y mantenimiento';
 	const heroDescription = city
-		? `Servicio de reparaciones para viviendas y negocios de ${city.ciudad} y ${city.area}.`
+		? `Servicio de reparaciones para viviendas y negocios de ${city.ciudad}${city.area ? ` y ${city.area}` : ''}.`
 		: 'Servicio de reparaciones para viviendas y negocios. Esta versión no está asociada a una ciudad concreta.';
 	const offerTitle = city
 		? `¿Quieres una web como esta para tu negocio en ${city.ciudad}?`
@@ -177,12 +190,12 @@ export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfi
 		slug: DEMO_ID,
 		label: city ? `Reparaciones en ${city.ciudad}` : 'Reparaciones',
 		summary: city
-			? `Ejemplo comercial para un negocio de reparaciones en ${city.ciudad} y ${city.area}.`
+			? `Ejemplo comercial para un negocio de reparaciones en ${city.ciudad}${city.area ? ` y ${city.area}` : ''}.`
 			: 'Ejemplo comercial de reparaciones, sin municipio asignado.',
 		seo: {
 			title: heroTitle,
 			description: city
-				? `Ejemplo comercial de 36web: web de un negocio ficticio de reparaciones y mantenimiento en ${city.ciudad} y ${city.area}.`
+				? `Ejemplo comercial de 36web: web de un negocio ficticio de reparaciones y mantenimiento en ${city.ciudad}${city.area ? ` y ${city.area}` : ''}.`
 				: 'Ejemplo comercial de 36web: web de un negocio ficticio de reparaciones y mantenimiento, sin ciudad asignada.',
 			image: `${img}/hero.webp`,
 			imageAlt: `Persona pintando una estancia en obras. ${stock}`,
@@ -211,7 +224,7 @@ export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfi
 		notice: {
 			text: city
 				? `Ejemplo comercial de 36web. El negocio, los datos y los trabajos son ficticios: no es un proyecto realizado para un cliente de ${city.ciudad}.`
-				: 'Ejemplo comercial de 36web. El negocio, los datos y los trabajos son ficticios. Esta URL no corresponde a una ciudad configurada.',
+				: 'Ejemplo comercial de 36web. El negocio, los datos y los trabajos son ficticios. Esta dirección no trae un nombre de ciudad.',
 			ctaLabel: offerTitle,
 			ctaHref: contactHref,
 		},
@@ -224,7 +237,7 @@ export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfi
 		],
 		headerCta: { text: 'Pedir visita', href: '#contacto' },
 		hero: {
-			eyebrow: city ? `${city.ciudad} · ${city.area}` : 'Ejemplo comercial',
+			eyebrow: city ? (city.area ? `${city.ciudad} · ${city.area}` : city.ciudad) : 'Ejemplo comercial',
 			title: heroTitle,
 			description: heroDescription,
 			image: `${img}/hero.webp`,
@@ -244,10 +257,12 @@ export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfi
 		zones: {
 			id: 'zonas',
 			eyebrow: 'Zona de trabajo',
-			title: city ? `Trabajamos en ${city.ciudad} y alrededores` : 'Zona de trabajo',
+			title: city ? (city.zonas.length > 0 ? `Trabajamos en ${city.ciudad} y alrededores` : `Trabajamos en ${city.ciudad}`) : 'Zona de trabajo',
 			description: city
-				? `Además de ${city.ciudad}, el ejemplo contempla ${listInSpanish(city.zonas)}, en el ${city.area}. Es una zona ilustrativa: no implica encargos ni clientes en esas localidades.`
-				: 'Esta URL no corresponde a una ciudad configurada. No se listan municipios ni se da por hecho un área de desplazamiento.',
+				? city.area && city.zonas.length > 0
+					? `Además de ${city.ciudad}, el ejemplo contempla ${listInSpanish(city.zonas)}, en el ${city.area}. Es una zona ilustrativa: no implica encargos ni clientes en esas localidades.`
+					: `En ${city.ciudad} esta web muestra cómo se presentaría un negocio de reparaciones para viviendas y locales. No hay encargos ni clientes en ${city.ciudad}.`
+				: 'Esta dirección no trae un nombre de ciudad. No se listan municipios ni se da por hecho un área de desplazamiento.',
 			items: zoneItems(city),
 		},
 		projects: {
@@ -312,7 +327,7 @@ export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfi
 				{
 					title: 'Zona acotada',
 					description: city
-						? `El desplazamiento de ejemplo se limita a ${city.ciudad} y ${city.area}, para no prometer salidas irreales.`
+						? `El desplazamiento de ejemplo se nombra para ${city.ciudad}${city.area ? ` y ${city.area}` : ''}, para no prometer salidas irreales.`
 						: 'Esta versión no fija un municipio ni un área de desplazamiento.',
 					icon: '4',
 				},
@@ -353,7 +368,7 @@ export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfi
 			description: city
 				? `Respuestas de ejemplo para una web de este sector en ${city.ciudad}.`
 				: 'Respuestas de ejemplo para una web de este sector.',
-			items: faqItems(city),
+			items: faqItems(city, slug),
 		},
 		offer: {
 			id: 'quieres-una-web',
