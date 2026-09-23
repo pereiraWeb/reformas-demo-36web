@@ -155,6 +155,7 @@ export default defineConfig({
         return (
           !page.includes('/reparaciones') &&
           !page.includes('/psicologia') &&
+          !page.includes('/inmobiliaria') &&
           !page.includes('/demos') &&
           !page.includes('/thank-you') &&
           !page.includes('/ejemplos')

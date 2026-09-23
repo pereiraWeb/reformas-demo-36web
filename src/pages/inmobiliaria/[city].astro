@@ -1,0 +1,17 @@
+---
+import InmobiliariaStudio from '../../components/sector-demo/InmobiliariaStudio.astro';
+import { buildInmobiliariaDemo } from '../../config/localDemos/inmobiliaria';
+
+/**
+ * On demand. The city name is read from the URL segment, so
+ * `/inmobiliaria/getafe` is Getafe without adding it to a list.
+ * `noindex, nofollow` come from the shared layout. The route is not
+ * prerendered, so it stays out of the sitemap.
+ */
+export const prerender = false;
+
+const city = typeof Astro.params.city === 'string' ? Astro.params.city : '';
+const { demo, pagePath } = buildInmobiliariaDemo(city);
+---
+
+<InmobiliariaStudio demo={demo} pagePath={pagePath} />

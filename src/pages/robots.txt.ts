@@ -7,7 +7,7 @@ export const prerender = true;
  * Generated from `business.siteUrl` so the sitemap URL is always correct
  * without hand-editing a static file. Disallows the internal API route and
  * the component gallery (`/demos`), the sector demos (`/ejemplos`,
- * `/reparaciones` and `/psicologia`, which ship with `noindex` and stay out
+ * `/reparaciones`, `/psicologia` and `/inmobiliaria`, which ship with `noindex` and stay out
  * of the sitemap) and the `/thank-you` conversion page (not content worth ranking).
  */
 export const GET: APIRoute = () => {
@@ -17,6 +17,7 @@ Disallow: /demos
 Disallow: /ejemplos
 Disallow: /reparaciones
 Disallow: /psicologia
+Disallow: /inmobiliaria
 Disallow: /thank-you
 
 Sitemap: ${new URL('/sitemap-index.xml', business.siteUrl).toString()}

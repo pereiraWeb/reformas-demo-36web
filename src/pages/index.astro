@@ -7,6 +7,9 @@ import { TestimonialsGrid } from '../components/testimonials';
 import { CtaCentered } from '../components/cta';
 import LocalBusinessSchema from '../components/seo/LocalBusinessSchema.astro';
 import { business } from '../config/business';
+
+/** On demand so production middleware can refuse this URL. See `src/middleware.ts`. */
+export const prerender = false;
 ---
 
 <BusinessLayout title="Home" description="Welcome to our business website.">

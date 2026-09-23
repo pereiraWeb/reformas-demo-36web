@@ -1,0 +1,852 @@
+---
+import BusinessLayout from '../../layouts/BusinessLayout.astro';
+import ContactForm from '../forms/ContactForm.astro';
+import MapEmbed from '../media/MapEmbed.astro';
+import ResponsiveImage from '../media/ResponsiveImage.astro';
+import FaqSchema from '../seo/FaqSchema.astro';
+import { legalNavigation } from '../../config/navigation';
+import type { InmobiliariaDemo } from '../../config/localDemos/inmobiliaria';
+
+export interface Props {
+	demo: InmobiliariaDemo;
+	pagePath: string;
+}
+
+const { demo, pagePath } = Astro.props;
+const menuId = 'inmo-menu';
+
+const bodyStyle = [
+	'--color-primary: #111111',
+	'--color-secondary: #8a8178',
+	'--color-surface: #f3f0ea',
+	'--color-text: #141414',
+	'--color-text-muted: #5c564f',
+	'--color-border: #e3ddd4',
+	'--color-background: #f7f4ef',
+	'--radius-base: 0px',
+	'--font-base: "Outfit", system-ui, sans-serif',
+	'--font-heading: "Syne", "Outfit", system-ui, sans-serif',
+].join('; ');
+---
+
+<BusinessLayout
+	title={demo.seo.title}
+	description={demo.seo.description}
+	siteName={demo.brand}
+	noindex
+	nofollow
+	image={{ src: demo.seo.image, alt: demo.seo.imageAlt, width: 1600, height: 1067 }}
+	bodyStyle={bodyStyle}
+	showWhatsapp={false}
+	includeOrganizationSchema={false}
+>
+	<div slot="header" hidden></div>
+	<div slot="footer" hidden></div>
+
+	<div class="inmo">
+		<FaqSchema items={demo.faq.items} />
+
+		<header class="bar">
+			<a class="bar__brand" href={pagePath}>{demo.brand}</a>
+			<nav class="bar__links" aria-label="Secciones">
+				{demo.nav.map((item) => <a href={item.href}>{item.text}</a>)}
+			</nav>
+			<a class="bar__cta" href={demo.headerCta.href}>{demo.headerCta.text}</a>
+			<button
+				type="button"
+				class="bar__menu"
+				aria-expanded="false"
+				aria-controls={menuId}
+				data-inmo-toggle
+			>
+				Menú
+			</button>
+		</header>
+
+		<div class="drawer" id={menuId} hidden data-inmo-drawer>
+			<nav aria-label="Navegación principal">
+				{demo.nav.map((item) => <a href={item.href}>{item.text}</a>)}
+				<a href={demo.headerCta.href}>{demo.headerCta.text}</a>
+			</nav>
+		</div>
+
+		<p class="notice">
+			{demo.notice.text}{' '}
+			<a href={demo.notice.ctaHref} target="_blank" rel="noopener noreferrer">{demo.notice.ctaLabel}</a>
+		</p>
+
+		<section class="hero" aria-labelledby="inmo-hero-title">
+			<ResponsiveImage
+				class="hero__media"
+				src={demo.hero.image}
+				alt={demo.hero.imageAlt}
+				width={1600}
+				height={1067}
+				priority
+			/>
+			<div class="hero__shade"></div>
+			<div class="hero__copy">
+				<p class="kicker kicker--light">{demo.hero.eyebrow}</p>
+				<h1 id="inmo-hero-title">{demo.hero.title}</h1>
+				<p class="hero__lede">{demo.hero.description}</p>
+				<div class="actions">
+					<a class="pill pill--light" href={demo.hero.primary.href}>{demo.hero.primary.text}</a>
+					<a class="pill pill--line" href={demo.hero.secondary.href}>{demo.hero.secondary.text}</a>
+				</div>
+			</div>
+		</section>
+
+		<section id={demo.properties.id} class="block">
+			<header class="block__head">
+				<p class="kicker">{demo.properties.eyebrow}</p>
+				<h2>{demo.properties.title}</h2>
+				<p class="lede">{demo.properties.description}</p>
+			</header>
+			<div class="filters" role="group" aria-label="Filtros de ejemplo">
+				<button type="button" class="chip is-on" data-inmo-filter="all">Todas</button>
+				<button type="button" class="chip" data-inmo-filter="venta">Venta</button>
+				<button type="button" class="chip" data-inmo-filter="alquiler">Alquiler</button>
+				<button type="button" class="chip" data-inmo-filter="piso">Pisos</button>
+				<button type="button" class="chip" data-inmo-filter="casa">Casas</button>
+			</div>
+			<div class="listings">
+				{
+					demo.properties.items.map((item) => (
+						<article class="card" data-operation={item.operation} data-kind={item.kind}>
+							<a href="#contacto">
+								<span class="card__media">
+									<ResponsiveImage class="card__photo" src={item.image} alt={item.imageAlt} width={1600} height={1067} />
+									<span class="card__badge">{item.operationLabel}</span>
+								</span>
+								<span class="card__body">
+									<span class="card__kind">{item.kindLabel}</span>
+									<span class="card__title">{item.title}</span>
+									<span class="card__specs">{item.specs}</span>
+									<span class="card__price">{item.priceLabel}</span>
+									<span class="card__note">{item.note}</span>
+								</span>
+							</a>
+						</article>
+					))
+				}
+			</div>
+			<p class="empty" data-inmo-empty hidden>No hay fichas de ejemplo en este filtro.</p>
+		</section>
+
+		<section id={demo.owners.id} class="band">
+			<div class="band__copy">
+				<p class="kicker kicker--light">{demo.owners.eyebrow}</p>
+				<h2>{demo.owners.title}</h2>
+				<p>{demo.owners.description}</p>
+				<a class="pill pill--light" href={demo.owners.cta.href}>{demo.owners.cta.text}</a>
+			</div>
+			<ol>
+				{demo.owners.items.map((item) => (
+					<li>
+						<h3>{item.title}</h3>
+						<p>{item.description}</p>
+					</li>
+				))}
+			</ol>
+		</section>
+
+		<section id={demo.buyers.id} class="split">
+			<ResponsiveImage class="split__photo" src={demo.buyers.image} alt={demo.buyers.imageAlt} width={1600} height={1067} />
+			<div>
+				<p class="kicker">{demo.buyers.eyebrow}</p>
+				<h2>{demo.buyers.title}</h2>
+				<p class="lede">{demo.buyers.description}</p>
+				<ul class="points">
+					{demo.buyers.items.map((item) => (
+						<li>
+							<h3>{item.title}</h3>
+							<p>{item.description}</p>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+
+		<section id={demo.zones.id} class="block block--paper">
+			<header class="block__head">
+				<p class="kicker">{demo.zones.eyebrow}</p>
+				<h2>{demo.zones.title}</h2>
+				<p class="lede">{demo.zones.description}</p>
+			</header>
+			<ul class="places">
+				{demo.zones.places.map((place) => (
+					<li>
+						<h3>{place.title}</h3>
+						<p>{place.description}</p>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section id={demo.reasons.id} class="block">
+			<header class="block__head">
+				<p class="kicker">{demo.reasons.eyebrow}</p>
+				<h2>{demo.reasons.title}</h2>
+				<p class="lede">{demo.reasons.description}</p>
+			</header>
+			<ul class="reasons">
+				{demo.reasons.items.map((item) => (
+					<li>
+						<h3>{item.title}</h3>
+						<p>{item.description}</p>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section id={demo.process.id} class="block block--paper">
+			<header class="block__head">
+				<p class="kicker">{demo.process.eyebrow}</p>
+				<h2>{demo.process.title}</h2>
+				<p class="lede">{demo.process.description}</p>
+			</header>
+			<ol class="steps">
+				{demo.process.items.map((item, index) => (
+					<li>
+						<span>{String(index + 1).padStart(2, '0')}</span>
+						<h3>{item.title}</h3>
+						<p>{item.description}</p>
+					</li>
+				))}
+			</ol>
+		</section>
+
+		{
+			demo.testimonials.enabled && demo.testimonials.items.length > 0 && (
+				<section id={demo.testimonials.id} class="block">
+					<header class="block__head">
+						<p class="kicker">{demo.testimonials.eyebrow}</p>
+						<h2>{demo.testimonials.title}</h2>
+					</header>
+					<ul class="quotes">
+						{demo.testimonials.items.map((item) => (
+							<li>
+								<blockquote>
+									<p>{item.quote}</p>
+									<footer>
+										<strong>{item.name}</strong>
+										<span>{item.detail}</span>
+									</footer>
+								</blockquote>
+							</li>
+						))}
+					</ul>
+				</section>
+			)
+		}
+
+		<section id={demo.faq.id} class="block">
+			<header class="block__head">
+				<p class="kicker">{demo.faq.eyebrow}</p>
+				<h2>{demo.faq.title}</h2>
+				<p class="lede">{demo.faq.description}</p>
+			</header>
+			<div class="faq">
+				{demo.faq.items.map((item) => (
+					<details>
+						<summary>{item.question}</summary>
+						<p>{item.answer}</p>
+					</details>
+				))}
+			</div>
+		</section>
+
+		<section id={demo.offer.id} class="offer">
+			<p class="kicker kicker--light">{demo.offer.eyebrow}</p>
+			<h2>{demo.offer.title}</h2>
+			<p>{demo.offer.description}</p>
+			<div class="actions">
+				<a class="pill pill--light" href={demo.offer.primary.href} target="_blank" rel="noopener noreferrer">{demo.offer.primary.text}</a>
+				<a class="pill pill--line" href={demo.offer.secondary.href} target="_blank" rel="noopener noreferrer">{demo.offer.secondary.text}</a>
+			</div>
+		</section>
+
+		<section id={demo.contact.id} class="block">
+			<div class="contact">
+				<div>
+					<p class="kicker">{demo.contact.eyebrow}</p>
+					<h2>{demo.contact.heading}</h2>
+					<p class="lede">{demo.contact.description}</p>
+					<ContactForm submitText={demo.contact.submitText} successRedirect="" />
+				</div>
+				<aside class="facts">
+					<h3>{demo.contact.cardTitle}</h3>
+					<dl>
+						<div><dt>Correo</dt><dd>{demo.identity.email}</dd></div>
+						<div><dt>Teléfono</dt><dd>{demo.identity.phone}</dd></div>
+						<div><dt>Lugar</dt><dd>{demo.identity.location}</dd></div>
+						<div><dt>Dirección</dt><dd>{demo.identity.address}</dd></div>
+						{demo.identity.hours.map((row) => (
+							<div><dt>{row.days}</dt><dd>{row.hours}</dd></div>
+						))}
+					</dl>
+				</aside>
+			</div>
+			{demo.identity.mapAddress && (
+				<MapEmbed class="contact__map" address={demo.identity.mapAddress} title={demo.identity.mapTitle} />
+			)}
+		</section>
+
+		<footer class="colophon">
+			<p class="colophon__brand">{demo.brand}</p>
+			<p>{demo.footer.copyright}</p>
+			<ul>
+				{legalNavigation.map((item) => (
+					<li><a href={item.href}>{item.label}</a></li>
+				))}
+			</ul>
+		</footer>
+	</div>
+</BusinessLayout>
+
+<script>
+	function initInmo() {
+		const root = document.querySelector<HTMLElement>('.inmo');
+		if (!root || root.dataset.ready === 'true') return;
+		root.dataset.ready = 'true';
+
+		const toggle = root.querySelector<HTMLButtonElement>('[data-inmo-toggle]');
+		const drawer = root.querySelector<HTMLElement>('[data-inmo-drawer]');
+		const setOpen = (open: boolean) => {
+			if (!drawer || !toggle) return;
+			drawer.hidden = !open;
+			toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+			toggle.textContent = open ? 'Cerrar' : 'Menú';
+			document.body.classList.toggle('inmo-nav-open', open);
+		};
+		toggle?.addEventListener('click', () => setOpen(drawer?.hidden !== false));
+		drawer?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') setOpen(false);
+		});
+
+		const cards = [...root.querySelectorAll<HTMLElement>('.card')];
+		const empty = root.querySelector<HTMLElement>('[data-inmo-empty]');
+		const chips = [...root.querySelectorAll<HTMLButtonElement>('[data-inmo-filter]')];
+		const apply = (filter: string) => {
+			let visible = 0;
+			cards.forEach((card) => {
+				const match = filter === 'all' || card.dataset.operation === filter || card.dataset.kind === filter;
+				card.hidden = !match;
+				if (match) visible += 1;
+			});
+			if (empty) empty.hidden = visible > 0;
+			chips.forEach((chip) => chip.classList.toggle('is-on', chip.dataset.inmoFilter === filter));
+		};
+		chips.forEach((chip) => {
+			chip.addEventListener('click', () => apply(chip.dataset.inmoFilter ?? 'all'));
+		});
+	}
+
+	initInmo();
+	document.addEventListener('astro:page-load', initInmo);
+</script>
+
+<style is:global>
+	@font-face {
+		font-family: 'Syne';
+		font-style: normal;
+		font-weight: 700;
+		font-display: swap;
+		src: url('/fonts/inmobiliaria/syne-700.woff2') format('woff2');
+	}
+	@font-face {
+		font-family: 'Outfit';
+		font-style: normal;
+		font-weight: 400;
+		font-display: swap;
+		src: url('/fonts/inmobiliaria/outfit-400.woff2') format('woff2');
+	}
+	@font-face {
+		font-family: 'Outfit';
+		font-style: normal;
+		font-weight: 500;
+		font-display: swap;
+		src: url('/fonts/inmobiliaria/outfit-500.woff2') format('woff2');
+	}
+	@font-face {
+		font-family: 'Outfit';
+		font-style: normal;
+		font-weight: 600;
+		font-display: swap;
+		src: url('/fonts/inmobiliaria/outfit-600.woff2') format('woff2');
+	}
+	body.inmo-nav-open { overflow: hidden; }
+</style>
+
+<style>
+	.inmo {
+		background: #f7f4ef;
+		color: #141414;
+		font-family: 'Outfit', system-ui, sans-serif;
+	}
+
+	.inmo :global(h1),
+	.inmo :global(h2),
+	.inmo :global(h3) {
+		font-family: 'Syne', 'Outfit', system-ui, sans-serif;
+		font-weight: 700;
+		letter-spacing: -0.04em;
+		line-height: 0.96;
+		margin: 0;
+	}
+
+	.inmo section[id],
+	.inmo .filters {
+		scroll-margin-top: 5rem;
+	}
+
+	.bar {
+		position: sticky;
+		top: 0;
+		z-index: 30;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		min-height: 4.25rem;
+		padding: 0 1.1rem;
+		background: #111;
+		color: #f7f4ef;
+	}
+
+	.bar__brand {
+		font-family: 'Syne', sans-serif;
+		font-size: 1.2rem;
+		letter-spacing: -0.04em;
+		color: inherit;
+		white-space: nowrap;
+	}
+
+	.bar__links { display: none; }
+
+	.bar__cta {
+		display: none;
+		margin-left: auto;
+		padding: 0.55rem 0.9rem;
+		border: 1px solid rgba(247, 244, 239, 0.45);
+		border-radius: 999px;
+		font-size: 0.82rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: inherit;
+	}
+
+	.bar__menu {
+		margin-left: auto;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		font-size: 0.82rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		cursor: pointer;
+	}
+
+	.drawer {
+		position: fixed;
+		z-index: 25;
+		inset: 4.25rem 0 0 0;
+		background: #111;
+		color: #f7f4ef;
+		padding: 1.5rem 1.25rem 2rem;
+	}
+
+	.drawer nav {
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	.drawer a {
+		padding: 0.7rem 0;
+		border-bottom: 1px solid rgba(247, 244, 239, 0.14);
+		font-family: 'Syne', sans-serif;
+		font-size: 1.8rem;
+		letter-spacing: -0.04em;
+		color: inherit;
+	}
+
+	.notice {
+		padding: 0.85rem 1.15rem;
+		background: #ebe6de;
+		color: #5c564f;
+		font-size: 0.92rem;
+		line-height: 1.45;
+	}
+
+	.notice a {
+		color: #111;
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+	}
+
+	.hero {
+		position: relative;
+		display: grid;
+		align-items: end;
+		min-height: min(44rem, 86svh);
+		background: #111;
+		color: #f7f4ef;
+	}
+
+	:global(.hero__media) {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center 82%;
+	}
+
+	.hero__shade {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg, rgba(10, 10, 10, 0.15) 0%, rgba(10, 10, 10, 0.72) 100%);
+	}
+
+	.hero__copy {
+		position: relative;
+		z-index: 1;
+		padding: 2rem 1.15rem 1.6rem;
+		max-width: 46rem;
+	}
+
+	.hero h1 {
+		font-size: clamp(3.1rem, 12vw, 6.4rem);
+		max-width: 11ch;
+	}
+
+	.hero__lede {
+		max-width: 34rem;
+		margin-top: 1rem;
+		font-size: 1.05rem;
+		line-height: 1.5;
+		color: rgba(247, 244, 239, 0.88);
+	}
+
+	.kicker {
+		margin: 0 0 0.75rem;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: #8a8178;
+	}
+
+	.kicker--light { color: rgba(247, 244, 239, 0.72); }
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.65rem;
+		margin-top: 1.4rem;
+	}
+
+	.pill {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.9rem;
+		padding: 0.65rem 1.15rem;
+		border-radius: 999px;
+		background: #111;
+		color: #f7f4ef;
+		text-align: center;
+		line-height: 1.25;
+	}
+
+	.pill--light { background: #f7f4ef; color: #111; }
+	.pill--line {
+		background: transparent;
+		color: #f7f4ef;
+		border: 1px solid rgba(247, 244, 239, 0.55);
+	}
+
+	.block { padding: clamp(3.2rem, 8vw, 6rem) 1.15rem; }
+	.block--paper { background: #f3f0ea; }
+
+	.block__head h2,
+	.band h2,
+	.split h2,
+	.offer h2,
+	.contact h2 {
+		font-size: clamp(2.2rem, 5vw, 3.8rem);
+		max-width: 16ch;
+	}
+
+	.lede {
+		max-width: 38rem;
+		margin-top: 0.9rem;
+		color: #5c564f;
+		line-height: 1.55;
+	}
+
+	.filters {
+		display: flex;
+		gap: 0.45rem;
+		margin-top: 1.6rem;
+		overflow-x: auto;
+	}
+
+	.chip {
+		flex: 0 0 auto;
+		border: 1px solid #111;
+		background: transparent;
+		color: #111;
+		border-radius: 999px;
+		padding: 0.45rem 0.85rem;
+		font: inherit;
+		font-size: 0.85rem;
+		cursor: pointer;
+	}
+
+	.chip.is-on { background: #111; color: #f7f4ef; }
+
+	.listings {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: min(82vw, 22rem);
+		gap: 0.85rem;
+		margin-top: 1.25rem;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		padding-bottom: 0.4rem;
+	}
+
+	.card { scroll-snap-align: start; }
+	.card[hidden] { display: none; }
+
+	.card a {
+		display: grid;
+		color: inherit;
+		background: #fff;
+	}
+
+	.card__media {
+		position: relative;
+		display: block;
+	}
+
+	:global(.card__photo) {
+		display: block;
+		width: 100%;
+		height: 16rem;
+		object-fit: cover;
+	}
+
+	.card__badge {
+		position: absolute;
+		z-index: 1;
+		top: 0.75rem;
+		left: 0.75rem;
+		margin: 0;
+		padding: 0.4rem 0.7rem;
+		border-radius: 999px;
+		background: #f7f4ef;
+		color: #111;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		line-height: 1;
+		text-transform: uppercase;
+		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+	}
+
+	.card__body {
+		display: grid;
+		gap: 0.25rem;
+		padding: 0.85rem 0.95rem 1.1rem;
+	}
+
+	.card__kind {
+		font-size: 0.72rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: #8a8178;
+	}
+
+	.card__title {
+		font-family: 'Syne', sans-serif;
+		font-size: 1.45rem;
+		letter-spacing: -0.03em;
+	}
+
+	.card__specs, .card__note { color: #5c564f; font-size: 0.92rem; line-height: 1.4; }
+	.card__price { margin-top: 0.35rem; font-weight: 600; }
+
+	.empty { margin-top: 1rem; color: #5c564f; }
+
+	.band {
+		display: grid;
+		gap: 1.5rem;
+		padding: clamp(3.2rem, 8vw, 6rem) 1.15rem;
+		background: #111;
+		color: #f7f4ef;
+	}
+
+	.band p, .band li p { color: rgba(247, 244, 239, 0.78); line-height: 1.5; }
+	.band .pill { margin-top: 1.3rem; }
+
+	.band ol {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0;
+	}
+
+	.band li {
+		padding: 1.1rem 0;
+		border-top: 1px solid rgba(247, 244, 239, 0.16);
+	}
+
+	.band h3, .points h3, .reasons h3, .steps h3, .places h3 {
+		font-size: 1.45rem;
+		margin-bottom: 0.35rem;
+	}
+
+	.split {
+		display: grid;
+		background: #f7f4ef;
+	}
+
+	:global(.split__photo) {
+		width: 100%;
+		height: 18rem;
+		object-fit: cover;
+	}
+
+	.split > div { padding: clamp(2rem, 6vw, 4rem) 1.15rem; }
+
+	.points {
+		list-style: none;
+		margin: 1.4rem 0 0;
+		padding: 0;
+	}
+
+	.points li {
+		padding: 0.95rem 0;
+		border-top: 1px solid #e3ddd4;
+	}
+
+	.points p, .reasons p, .steps p, .places p { color: #5c564f; line-height: 1.5; }
+
+	.places, .reasons {
+		list-style: none;
+		margin: 1.6rem 0 0;
+		padding: 0;
+		display: grid;
+		gap: 0.8rem;
+	}
+
+	.places li, .reasons li {
+		padding: 1.1rem 0;
+		border-top: 1px solid #e3ddd4;
+	}
+
+	.places h3 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+
+	.steps {
+		list-style: none;
+		margin: 1.6rem 0 0;
+		padding: 0;
+		display: grid;
+		gap: 1rem;
+	}
+
+	.steps li { padding-top: 0.8rem; border-top: 2px solid #111; }
+	.steps span {
+		display: block;
+		margin-bottom: 0.55rem;
+		font-size: 0.72rem;
+		letter-spacing: 0.14em;
+		color: #8a8178;
+	}
+
+	.faq { margin-top: 1.2rem; border-top: 1px solid #e3ddd4; }
+	.faq details { border-bottom: 1px solid #e3ddd4; }
+	.faq summary {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.05rem 0;
+		cursor: pointer;
+		font-family: 'Syne', sans-serif;
+		font-size: 1.2rem;
+		letter-spacing: -0.03em;
+		list-style: none;
+	}
+	.faq summary::-webkit-details-marker { display: none; }
+	.faq summary::after { content: '+'; font-family: 'Outfit', sans-serif; }
+	.faq details[open] summary::after { content: '–'; }
+	.faq p { max-width: 40rem; padding-bottom: 1rem; color: #5c564f; line-height: 1.55; }
+
+	.offer {
+		padding: clamp(3.2rem, 8vw, 6rem) 1.15rem;
+		background: #1b1b1b;
+		color: #f7f4ef;
+	}
+	.offer p { max-width: 38rem; margin-top: 1rem; color: rgba(247, 244, 239, 0.78); line-height: 1.55; }
+
+	.contact { display: grid; gap: 2rem; }
+	.facts { padding: 1.3rem; background: #f3f0ea; }
+	.facts h3 { font-size: 1.7rem; margin-bottom: 0.6rem; }
+	.facts div { padding: 0.7rem 0; border-top: 1px solid #e3ddd4; }
+	.facts dt { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: #8a8178; }
+	.facts dd { margin: 0.15rem 0 0; font-family: 'Syne', sans-serif; font-size: 1.15rem; }
+	:global(.contact__map) { margin-top: 1.5rem; }
+
+	.colophon {
+		display: grid;
+		gap: 0.7rem;
+		padding: 1.5rem 1.15rem 2.2rem;
+		background: #111;
+		color: rgba(247, 244, 239, 0.72);
+		font-size: 0.88rem;
+	}
+	.colophon__brand { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: #f7f4ef; }
+	.colophon ul { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; list-style: none; margin: 0; padding: 0; }
+	.colophon a { color: inherit; text-decoration: underline; text-underline-offset: 0.16em; }
+
+	.quotes { list-style: none; margin: 1.4rem 0 0; padding: 0; display: grid; gap: 1rem; }
+	.quotes blockquote { margin: 0; padding: 1.2rem; background: #f3f0ea; }
+	.quotes footer { display: grid; margin-top: 0.8rem; font-size: 0.9rem; }
+
+	@media (min-width: 800px) {
+		.listings {
+			grid-auto-flow: unset;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-auto-columns: unset;
+			overflow: visible;
+		}
+		:global(.card__photo) { height: 18rem; }
+		.reasons, .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 1.5rem; }
+		.places { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	}
+
+	@media (min-width: 980px) {
+		.bar { padding-inline: 1.6rem; }
+		.bar__brand { font-size: 1.45rem; }
+		.bar__cta { display: inline-flex; margin-left: auto; }
+		.bar__menu { display: none; }
+		.bar__links { display: flex; gap: 1.15rem; margin-left: 1.5rem; }
+		.bar__links a { color: inherit; font-size: 0.92rem; }
+		.bar__links a:hover { opacity: 0.7; }
+		.bar__menu, .drawer { display: none; }
+		.hero { min-height: 100svh; }
+		.hero__copy { padding: 0 4rem 4.5rem; }
+		.block, .band, .offer { padding-inline: 4rem; }
+		.split { grid-template-columns: 1.05fr 0.95fr; align-items: stretch; }
+		:global(.split__photo) { height: 100%; min-height: 36rem; }
+		.split > div { padding: 4rem 3rem; }
+		.band { grid-template-columns: 0.9fr 1.1fr; gap: 3rem; align-items: start; }
+		.listings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+		.reasons, .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+		.contact { grid-template-columns: 1.15fr 0.85fr; align-items: start; }
+	}
+</style>

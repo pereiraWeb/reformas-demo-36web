@@ -3,6 +3,9 @@ import BusinessLayout from '../../layouts/BusinessLayout.astro';
 import Section from '../../components/ui/Section.astro';
 import CardBasic from '../../components/cards/CardBasic.astro';
 import { CITY_CONFIG, configuredCitySlugs } from '../../config/localDemos/cities';
+
+/** On demand so production middleware can refuse this URL. See `src/middleware.ts`. */
+export const prerender = false;
 ---
 
 <BusinessLayout
@@ -39,6 +42,13 @@ import { CITY_CONFIG, configuredCitySlugs } from '../../config/localDemos/cities
 									title={`Psicología en ${city.ciudad}`}
 									description={`${city.ciudad} y ${city.area}.`}
 									href={`/psicologia/${slug}`}
+								/>
+							</li>
+							<li>
+								<CardBasic
+									title={`Inmobiliaria en ${city.ciudad}`}
+									description={`${city.ciudad} y ${city.area}.`}
+									href={`/inmobiliaria/${slug}`}
 								/>
 							</li>
 						</>

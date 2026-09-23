@@ -2,7 +2,8 @@ import type { SectorDemoFaqItem } from '../sectorDemos/types';
 
 /**
  * Municipalities the repairs demo can name.
- * Repairs lives at `/reparaciones/${slug}` and psychology at `/psicologia/${slug}`.
+ * Repairs lives at `/reparaciones/${slug}`, psychology at `/psicologia/${slug}`
+ * and real estate at `/inmobiliaria/${slug}`.
  * A slug that is not listed here still becomes the city name. Listed slugs keep
  * their written name, area and nearby towns.
  *
