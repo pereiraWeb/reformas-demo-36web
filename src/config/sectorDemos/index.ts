@@ -1,6 +1,6 @@
 /**
  * Sector demos are rendered from `src/config/localDemos/`.
- * The repairs demo changes its city from `/[city]` (`src/pages/[city].astro`).
+ * Repairs is `/reparaciones/[city]`. Psychology is `/psicologia/[city]`.
  * Add a municipality in `src/config/localDemos/cities.ts`; the page, the
  * `noindex` tag and the sitemap exclusion already cover it.
  */

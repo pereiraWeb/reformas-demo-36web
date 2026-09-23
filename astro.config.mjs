@@ -6,7 +6,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { business } from './src/config/business.ts';
-import { configuredCitySlugs } from './src/config/localDemos/cities.ts';
 import { getConfigIssues } from './src/lib/configCheck.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -139,8 +138,12 @@ export default defineConfig({
   // links/bookmarks/search results 301 to the new URL instead of 404ing —
   // e.g. `'/services/old-slug': '/services/new-slug'`. Astro turns these
   // into real redirects at build time.
+  // Old root city URLs now live under /reparaciones.
   redirects: {
-    '/ejemplos/reparaciones-torrejon': '/torrejon-de-ardoz',
+    '/ejemplos/reparaciones-torrejon': '/reparaciones/torrejon-de-ardoz',
+    '/torrejon-de-ardoz': '/reparaciones/torrejon-de-ardoz',
+    '/alcala-de-henares': '/reparaciones/alcala-de-henares',
+    '/coslada': '/reparaciones/coslada',
   },
 
   integrations: [
@@ -149,10 +152,8 @@ export default defineConfig({
       // forgets to delete `src/pages/demos/` before launching, and out of
       // the conversion-tracking `/thank-you` page (it's not content to rank).
       filter: (page) => {
-        const slug = new URL(page).pathname.replace(/^\//, '').replace(/\/$/, '');
-        const isCityDemo = slug.length > 0 && !slug.includes('/') && configuredCitySlugs.includes(slug);
         return (
-          !isCityDemo &&
+          !page.includes('/reparaciones') &&
           !page.includes('/psicologia') &&
           !page.includes('/demos') &&
           !page.includes('/thank-you') &&

@@ -163,7 +163,7 @@ export function buildReparacionesDemo(citySlug: string): { demo: SectorDemoConfi
 	const slug = citySlug.trim().toLowerCase();
 	const city = getCityConfig(slug);
 	const contactHref = reparacionesContactHref(city ? slug : undefined);
-	const pagePath = `/${slug}`;
+	const pagePath = `/reparaciones/${slug}`;
 
 	const heroTitle = city ? `Reparaciones y mantenimiento en ${city.ciudad}` : 'Reparaciones y mantenimiento';
 	const heroDescription = city

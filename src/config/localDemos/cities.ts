@@ -2,8 +2,9 @@ import type { SectorDemoFaqItem } from '../sectorDemos/types';
 
 /**
  * Municipalities the repairs demo can name.
- * The route is `/${slug}` (for example `/torrejon-de-ardoz`).
- * Any other single-segment URL still renders the demo, with the generic copy.
+ * Repairs lives at `/reparaciones/${slug}` (for example `/reparaciones/torrejon-de-ardoz`).
+ * Psychology lives at `/psicologia/${slug}`. A psychology slug that is not listed
+ * here still becomes the city name. An unlisted repairs slug renders the generic copy.
  *
  * To add a city: append a key here. No new page, project, or component.
  * `zonas` are nearby municipalities used only as an illustrative service area.
@@ -26,7 +27,7 @@ export const CITY_CONFIG: Record<string, CityConfig> = {
 			{
 				question: '¿Por qué esta página habla de Torrejón de Ardoz?',
 				answer:
-					'Porque la URL es /torrejon-de-ardoz. El municipio y los alrededores salen de la configuración de la demo. No hay un negocio, un teléfono ni una dirección reales asociados a Torrejón de Ardoz.',
+					'Porque la URL es /reparaciones/torrejon-de-ardoz. El municipio y los alrededores salen de la configuración de la demo. No hay un negocio, un teléfono ni una dirección reales asociados a Torrejón de Ardoz.',
 			},
 		],
 	},
@@ -38,7 +39,7 @@ export const CITY_CONFIG: Record<string, CityConfig> = {
 			{
 				question: '¿Por qué esta página habla de Alcalá de Henares?',
 				answer:
-					'Porque la URL es /alcala-de-henares. El municipio y los alrededores salen de la configuración de la demo. No hay un negocio, un teléfono ni una dirección reales asociados a Alcalá de Henares.',
+					'Porque la URL es /reparaciones/alcala-de-henares. El municipio y los alrededores salen de la configuración de la demo. No hay un negocio, un teléfono ni una dirección reales asociados a Alcalá de Henares.',
 			},
 		],
 	},
@@ -50,7 +51,7 @@ export const CITY_CONFIG: Record<string, CityConfig> = {
 			{
 				question: '¿Por qué esta página habla de Coslada?',
 				answer:
-					'Porque la URL es /coslada. El municipio y los alrededores salen de la configuración de la demo. No hay un negocio, un teléfono ni una dirección reales asociados a Coslada.',
+					'Porque la URL es /reparaciones/coslada. El municipio y los alrededores salen de la configuración de la demo. No hay un negocio, un teléfono ni una dirección reales asociados a Coslada.',
 			},
 		],
 	},
