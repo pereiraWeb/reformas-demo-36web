@@ -1,0 +1,17 @@
+---
+import SectorDemoPage from '../components/sector-demo/SectorDemoPage.astro';
+import { buildReparacionesDemo } from '../config/localDemos/reparaciones';
+
+/**
+ * On demand so an unknown city still renders the generic demo instead of a 404.
+ * Static pages (`/about`, `/ejemplos`, …) keep priority over this segment.
+ * The layout sends `noindex, nofollow`. The route is not prerendered, so it
+ * stays out of the sitemap.
+ */
+export const prerender = false;
+
+const city = typeof Astro.params.city === 'string' ? Astro.params.city : '';
+const { demo, pagePath } = buildReparacionesDemo(city);
+---
+
+<SectorDemoPage demo={demo} pagePath={pagePath} />

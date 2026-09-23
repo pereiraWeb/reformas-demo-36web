@@ -5,11 +5,23 @@ import CardImage from '../cards/CardImage.astro';
 import { services, servicesContent, getServiceHref } from '../../config/servicesContent';
 import { backgroundStyle, type BackgroundProps } from '../../lib/background';
 
+export interface ServicesShowcaseItem {
+	title: string;
+	description: string;
+	image?: string;
+	imageAlt?: string;
+	href?: string;
+	tag?: string;
+	ctaText?: string;
+}
+
 export interface Props extends BackgroundProps {
 	eyebrow?: string;
 	title?: string;
 	description?: string;
 	ctaText?: string;
+	/** When set, replaces the global `services` list. Omit to keep the starter content. */
+	items?: ServicesShowcaseItem[];
 }
 
 const {
@@ -17,9 +29,21 @@ const {
 	title = servicesContent.showcase.title,
 	description = servicesContent.showcase.description,
 	ctaText = servicesContent.showcase.ctaText,
+	items,
 	backgroundColor,
 	backgroundImage,
 } = Astro.props;
+
+const showcaseItems: ServicesShowcaseItem[] =
+	items ??
+	services.map((service) => ({
+		title: service.title,
+		description: service.description,
+		image: service.image,
+		imageAlt: service.title,
+		href: getServiceHref(service),
+		ctaText,
+	}));
 
 const style = backgroundStyle({ backgroundColor, backgroundImage });
 ---
@@ -34,14 +58,16 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 			/>
 		</div>
 		<ul class="services-showcase__list">
-			{services.map((service) => (
+			{showcaseItems.map((item) => (
 				<li>
 					<CardImage
-						title={service.title}
-						description={service.description}
-						image={service.image}
-						ctaText={ctaText}
-						href={getServiceHref(service)}
+						title={item.title}
+						description={item.description}
+						image={item.image}
+						imageAlt={item.imageAlt}
+						tag={item.tag}
+						ctaText={item.ctaText}
+						href={item.href}
 					/>
 				</li>
 			))}

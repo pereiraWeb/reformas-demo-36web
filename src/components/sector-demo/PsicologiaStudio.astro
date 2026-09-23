@@ -1,0 +1,1120 @@
+---
+import BusinessLayout from '../../layouts/BusinessLayout.astro';
+import ContactForm from '../forms/ContactForm.astro';
+import MapEmbed from '../media/MapEmbed.astro';
+import ResponsiveImage from '../media/ResponsiveImage.astro';
+import FaqSchema from '../seo/FaqSchema.astro';
+import { legalNavigation } from '../../config/navigation';
+import type { SectorDemoConfig } from '../../config/sectorDemos/types';
+
+export interface Props {
+	demo: SectorDemoConfig;
+	pagePath: string;
+}
+
+const { demo, pagePath } = Astro.props;
+
+const bodyStyle = [
+	`--color-primary: ${demo.theme.primary}`,
+	`--color-secondary: ${demo.theme.secondary}`,
+	`--color-surface: ${demo.theme.surface}`,
+	`--color-text: ${demo.theme.text}`,
+	`--color-border: ${demo.theme.border}`,
+	`--color-background: ${demo.theme.background ?? '#efeae1'}`,
+	`--color-text-muted: #5c564e`,
+	`--radius-base: 0px`,
+	`--font-base: "Instrument Sans", system-ui, sans-serif`,
+	`--font-heading: "Instrument Serif", Georgia, serif`,
+].join('; ');
+
+const railId = 'psico-nav';
+---
+
+<BusinessLayout
+	title={demo.seo.title}
+	description={demo.seo.description}
+	siteName={demo.identity.name}
+	noindex
+	nofollow
+	image={{ src: demo.seo.image, alt: demo.seo.imageAlt, width: 1600, height: 1200 }}
+	bodyStyle={bodyStyle}
+	showWhatsapp={false}
+	includeOrganizationSchema={false}
+>
+	<header class="top" slot="header">
+		<a class="top__brand" href={pagePath}>{demo.identity.name}</a>
+		<a class="top__cita" href={demo.headerCta.href}>{demo.headerCta.text}</a>
+		<button
+			type="button"
+			class="top__toggle"
+			aria-expanded="false"
+			aria-controls={railId}
+			data-psico-toggle
+			data-label-open="Abrir menú de navegación"
+			data-label-close="Cerrar menú de navegación"
+		>
+			Menú
+		</button>
+	</header>
+	<button type="button" class="scrim" slot="header" data-psico-scrim tabindex="-1" hidden aria-label="Cerrar menú de navegación"></button>
+	<aside class="rail" id={railId} slot="header">
+		<a class="rail__brand" href={pagePath}>{demo.identity.name}</a>
+		<p class="rail__place">{demo.identity.location}</p>
+		<nav class="rail__nav" aria-label="Navegación principal">
+			<ul>
+				{
+					demo.nav.map((item) => (
+						<li>
+							<a href={item.href}>{item.label}</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+		<a class="rail__cta" href={demo.headerCta.href}>{demo.headerCta.text}</a>
+		<a class="rail__quiet" href={demo.notice.ctaHref} target="_blank" rel="noopener noreferrer">Web para tu consulta</a>
+	</aside>
+	<div slot="footer" hidden></div>
+
+	<div class="studio">
+		<FaqSchema items={demo.faq.items} />
+
+		<p class="notice">
+			{demo.notice.text}{' '}
+			<a href={demo.notice.ctaHref} target="_blank" rel="noopener noreferrer">{demo.notice.ctaLabel}</a>
+		</p>
+
+		<section class="hero" aria-labelledby="psico-hero-title">
+			<ResponsiveImage
+				class="hero__media"
+				src={demo.hero.image}
+				alt={demo.hero.imageAlt}
+				width={1600}
+				height={1200}
+				priority
+			/>
+			<div class="hero__panel">
+				<p class="kicker">{demo.hero.eyebrow}</p>
+				<h1 id="psico-hero-title">{demo.hero.title}</h1>
+				<p class="lede">{demo.hero.description}</p>
+				<div class="hero__actions">
+					<a class="pill" href={demo.hero.primaryCta.href}>{demo.hero.primaryCta.text}</a>
+					<a class="pill pill--ghost" href={demo.hero.secondaryCta.href}>{demo.hero.secondaryCta.text}</a>
+				</div>
+			</div>
+		</section>
+
+		<section id={demo.services.id} class="block">
+			<header class="block__head">
+				<p class="kicker">01 — {demo.services.eyebrow}</p>
+				<h2>{demo.services.title}</h2>
+				<p class="lede">{demo.services.description}</p>
+			</header>
+			<ol class="index">
+				{
+					demo.services.items.map((item, index) => (
+						<li>
+							<a href={item.href ?? '#contacto'}>
+								<span class="index__num">{String(index + 1).padStart(2, '0')}</span>
+								<span class="index__copy">
+									<span class="index__title">{item.title}</span>
+									<span class="index__text">{item.description}</span>
+								</span>
+								<ResponsiveImage
+									class="index__photo"
+									src={item.image}
+									alt={item.imageAlt}
+									width={640}
+									height={480}
+								/>
+							</a>
+						</li>
+					))
+				}
+			</ol>
+		</section>
+
+		<section id={demo.advantages.id} class="block block--paper">
+			<div class="manifest">
+				<header class="block__head">
+					<p class="kicker">02 — {demo.advantages.eyebrow}</p>
+					<h2>{demo.advantages.title}</h2>
+					<p class="lede">{demo.advantages.description}</p>
+				</header>
+				<ol class="manifest__list">
+					{
+						demo.advantages.items.map((item) => (
+							<li>
+								<h3>{item.title}</h3>
+								<p>{item.description}</p>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</section>
+
+		{
+			demo.about && (
+				<section id={demo.about.id} class="block">
+					<div class="about">
+						<ResponsiveImage
+							class="about__photo"
+							src={demo.about.image}
+							alt={demo.about.imageAlt}
+							width={1280}
+							height={1600}
+						/>
+						<div>
+							<header class="block__head">
+								<p class="kicker">03 — {demo.about.eyebrow}</p>
+								<h2>{demo.about.title}</h2>
+								<p class="lede">{demo.about.description}</p>
+							</header>
+							<dl class="sheet">
+								{demo.about.fields.map((field) => (
+									<div>
+										<dt>{field.label}</dt>
+										<dd>{field.value}</dd>
+									</div>
+								))}
+							</dl>
+						</div>
+					</div>
+				</section>
+			)
+		}
+
+		{
+			demo.modalities && (
+				<section id={demo.modalities.id} class="block block--tight">
+					<header class="block__head block__head--inset">
+						<p class="kicker">04 — {demo.modalities.eyebrow}</p>
+						<h2>{demo.modalities.title}</h2>
+						<p class="lede">{demo.modalities.description}</p>
+					</header>
+					<div class="modes">
+						{demo.modalities.items.map((item, index) => (
+							<article class:list={['mode', index === 0 && 'mode--ink']}>
+								<h3>{item.title}</h3>
+								<p>{item.description}</p>
+							</article>
+						))}
+					</div>
+				</section>
+			)
+		}
+
+		<section id={demo.zones.id} class="block">
+			<header class="block__head">
+				<p class="kicker">05 — {demo.zones.eyebrow}</p>
+				<h2>{demo.zones.title}</h2>
+				<p class="lede">{demo.zones.description}</p>
+			</header>
+			<ul class="places">
+				{demo.zones.items.map((item) => <li>{item.title}</li>)}
+			</ul>
+		</section>
+
+		<section id={demo.process.id} class="block block--paper">
+			<header class="block__head">
+				<p class="kicker">06 — {demo.process.eyebrow}</p>
+				<h2>{demo.process.title}</h2>
+				<p class="lede">{demo.process.description}</p>
+			</header>
+			<ol class="steps">
+				{
+					demo.process.items.map((item, index) => (
+						<li>
+							<span>{String(index + 1).padStart(2, '0')}</span>
+							<h3>{item.title}</h3>
+							<p>{item.description}</p>
+						</li>
+					))
+				}
+			</ol>
+		</section>
+
+		<section id={demo.faq.id} class="block">
+			<header class="block__head">
+				<p class="kicker">07 — {demo.faq.eyebrow}</p>
+				<h2>{demo.faq.title}</h2>
+				<p class="lede">{demo.faq.description}</p>
+			</header>
+			<div class="faq">
+				{
+					demo.faq.items.map((item) => (
+						<details>
+							<summary>{item.question}</summary>
+							<p>{item.answer}</p>
+						</details>
+					))
+				}
+			</div>
+		</section>
+
+		<section id={demo.offer.id} class="offer">
+			<p class="kicker">{demo.offer.eyebrow}</p>
+			<h2>{demo.offer.title}</h2>
+			<p>{demo.offer.description}</p>
+			<div class="hero__actions">
+				<a class="pill pill--light" href={demo.offer.primary.href} target="_blank" rel="noopener noreferrer">
+					{demo.offer.primary.text}
+				</a>
+				<a class="pill pill--line" href={demo.offer.secondary.href} target="_blank" rel="noopener noreferrer">
+					{demo.offer.secondary.text}
+				</a>
+			</div>
+		</section>
+
+		<section id={demo.contact.id} class="block">
+			<div class="contact">
+				<div>
+					<header class="block__head">
+						<p class="kicker">08 — {demo.contact.eyebrow}</p>
+						<h2>{demo.contact.heading}</h2>
+						<p class="lede">{demo.contact.description}</p>
+					</header>
+					<ContactForm submitText={demo.contact.submitText} successRedirect="" />
+				</div>
+				<aside class="facts">
+					<h3>{demo.contact.cardTitle}</h3>
+					<dl>
+						<div>
+							<dt>Correo</dt>
+							<dd>{demo.identity.email}</dd>
+						</div>
+						<div>
+							<dt>Teléfono</dt>
+							<dd>{demo.identity.phone}</dd>
+						</div>
+						<div>
+							<dt>Lugar</dt>
+							<dd>{demo.identity.location}</dd>
+						</div>
+						{
+							demo.identity.hours.map((row) => (
+								<div>
+									<dt>{row.days}</dt>
+									<dd>{row.hours}</dd>
+								</div>
+							))
+						}
+					</dl>
+				</aside>
+			</div>
+			{
+				demo.identity.mapAddress && (
+					<MapEmbed class="contact__map" address={demo.identity.mapAddress} title={demo.identity.mapTitle} />
+				)
+			}
+		</section>
+
+		<footer class="colophon">
+			<p>{demo.footer.copyright}</p>
+			<ul>
+				{
+					legalNavigation.map((item) => (
+						<li>
+							<a href={item.href}>{item.label}</a>
+						</li>
+					))
+				}
+			</ul>
+		</footer>
+	</div>
+</BusinessLayout>
+
+<script>
+	function initPsicoRail() {
+		const rail = document.querySelector<HTMLElement>('.rail');
+		const toggle = document.querySelector<HTMLButtonElement>('[data-psico-toggle]');
+		const scrim = document.querySelector<HTMLButtonElement>('[data-psico-scrim]');
+		if (!rail || !toggle || rail.dataset.ready === 'true') return;
+		rail.dataset.ready = 'true';
+
+		const labelOpen = toggle.dataset.labelOpen ?? 'Abrir menú de navegación';
+		const labelClose = toggle.dataset.labelClose ?? 'Cerrar menú de navegación';
+
+		const desktop = window.matchMedia('(min-width: 960px)');
+
+		const setOpen = (open: boolean) => {
+			const wide = desktop.matches;
+			rail.classList.toggle('is-open', open);
+			scrim?.classList.toggle('is-open', open && !wide);
+			if (scrim) scrim.hidden = !open || wide;
+			if (!wide && !open) rail.setAttribute('inert', '');
+			else rail.removeAttribute('inert');
+			toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+			toggle.textContent = open ? 'Cerrar' : 'Menú';
+			toggle.setAttribute('aria-label', open ? labelClose : labelOpen);
+			document.body.classList.toggle('psico-nav-open', open && !wide);
+		};
+
+		setOpen(false);
+		desktop.addEventListener('change', () => setOpen(false));
+
+		toggle.addEventListener('click', () => setOpen(!rail.classList.contains('is-open')));
+		scrim?.addEventListener('click', () => setOpen(false));
+		rail.querySelectorAll('a').forEach((link) => {
+			link.addEventListener('click', () => setOpen(false));
+		});
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && rail.classList.contains('is-open')) {
+				setOpen(false);
+				toggle.focus();
+			}
+		});
+	}
+
+	initPsicoRail();
+	document.addEventListener('astro:page-load', initPsicoRail);
+</script>
+
+<style is:global>
+	@font-face {
+		font-family: 'Instrument Serif';
+		font-style: normal;
+		font-weight: 400;
+		font-display: swap;
+		src: url('/fonts/psicologia/instrument-serif-400.woff2') format('woff2');
+	}
+
+	@font-face {
+		font-family: 'Instrument Serif';
+		font-style: italic;
+		font-weight: 400;
+		font-display: swap;
+		src: url('/fonts/psicologia/instrument-serif-400-italic.woff2') format('woff2');
+	}
+
+	@font-face {
+		font-family: 'Instrument Sans';
+		font-style: normal;
+		font-weight: 400;
+		font-display: swap;
+		src: url('/fonts/psicologia/instrument-sans-400.woff2') format('woff2');
+	}
+
+	@font-face {
+		font-family: 'Instrument Sans';
+		font-style: normal;
+		font-weight: 500;
+		font-display: swap;
+		src: url('/fonts/psicologia/instrument-sans-500.woff2') format('woff2');
+	}
+
+	@font-face {
+		font-family: 'Instrument Sans';
+		font-style: normal;
+		font-weight: 600;
+		font-display: swap;
+		src: url('/fonts/psicologia/instrument-sans-600.woff2') format('woff2');
+	}
+
+	body:has(.studio) #main-content {
+		padding-top: 4.25rem;
+	}
+
+	body.psico-nav-open {
+		overflow: hidden;
+	}
+
+	@media (min-width: 960px) {
+		body:has(.studio) #main-content {
+			margin-left: 17rem;
+			padding-top: 0;
+		}
+
+		body.psico-nav-open {
+			overflow: auto;
+		}
+	}
+</style>
+
+<style>
+	.top,
+	.scrim,
+	.rail {
+		font-family: 'Instrument Sans', system-ui, sans-serif;
+	}
+
+	.top {
+		position: fixed;
+		z-index: 35;
+		inset: 0 0 auto 0;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		height: 4.25rem;
+		padding: 0 1rem;
+		background: #efeae1;
+		border-bottom: 1px solid #ddd4c6;
+	}
+
+	.top__brand {
+		font-family: 'Instrument Serif', Georgia, serif;
+		font-size: 1.55rem;
+		line-height: 1;
+	}
+
+	.top__cita {
+		margin-left: auto;
+		font-size: 0.82rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	.top__toggle {
+		border: 1px solid #1e2926;
+		background: transparent;
+		color: #1e2926;
+		font: inherit;
+		font-size: 0.82rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		padding: 0.45rem 0.7rem;
+		cursor: pointer;
+	}
+
+	.scrim {
+		position: fixed;
+		z-index: 45;
+		inset: 0;
+		border: 0;
+		padding: 0;
+		background: rgba(28, 25, 21, 0.45);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.3s ease;
+	}
+
+	.scrim.is-open {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.rail {
+		position: fixed;
+		z-index: 50;
+		inset: 0 auto 0 0;
+		display: flex;
+		flex-direction: column;
+		width: min(18.5rem, 86vw);
+		padding: 1.6rem 1.35rem 1.3rem;
+		background: #1e2926;
+		color: #f4efe6;
+		transform: translateX(-105%);
+		transition: transform 0.35s ease;
+	}
+
+	.rail.is-open {
+		transform: none;
+	}
+
+	.rail__brand {
+		max-width: 7.2ch;
+		font-family: 'Instrument Serif', Georgia, serif;
+		font-size: 2.7rem;
+		line-height: 0.9;
+		color: inherit;
+	}
+
+	.rail__place {
+		margin: 1rem 0 0;
+		font-size: 0.75rem;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: #d7c3b4;
+	}
+
+	.rail__nav {
+		flex: 1 1 auto;
+		min-height: 0;
+		margin-top: 1.5rem;
+		overflow: auto;
+	}
+
+	.rail__nav ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.15rem;
+	}
+
+	.rail__nav a {
+		display: block;
+		padding: 0.42rem 0;
+		color: inherit;
+		font-size: 0.98rem;
+	}
+
+	.rail__nav a:hover {
+		color: #f0d2c2;
+	}
+
+	.rail__cta {
+		margin-top: auto;
+		display: inline-flex;
+		justify-content: center;
+		padding: 0.8rem 1rem;
+		background: #f4efe6;
+		color: #1e2926;
+		text-align: center;
+	}
+
+	.rail__quiet {
+		margin-top: 0.85rem;
+		font-size: 0.78rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: #d7c3b4;
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+	}
+
+	.studio {
+		color: var(--color-text);
+		background: var(--color-background);
+	}
+
+	.studio :global(h1),
+	.studio :global(h2),
+	.studio :global(h3) {
+		font-weight: 400;
+		letter-spacing: -0.03em;
+		line-height: 0.98;
+		margin: 0;
+	}
+
+	.studio :global(p) {
+		margin: 0;
+	}
+
+	.notice {
+		margin: 0;
+		padding: 0.85rem clamp(1.25rem, 4vw, 4rem);
+		border-bottom: 1px solid var(--color-border);
+		font-size: 0.92rem;
+		line-height: 1.45;
+		color: var(--color-text-muted);
+	}
+
+	.notice a {
+		color: var(--color-secondary);
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+	}
+
+	.hero {
+		position: relative;
+		background: #1e2926;
+	}
+
+	:global(.hero__media) {
+		width: 100%;
+		height: 16rem;
+		object-fit: cover;
+		object-position: center 62%;
+	}
+
+	.hero__panel {
+		position: relative;
+		z-index: 1;
+		padding: 1.6rem 1.25rem 0.25rem;
+		background: var(--color-background);
+	}
+
+	.hero__panel h1 {
+		font-size: clamp(3rem, 8vw, 5.4rem);
+		max-width: 12ch;
+	}
+
+	.kicker {
+		margin: 0 0 0.8rem;
+		font-size: 0.72rem;
+		font-weight: 500;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-secondary);
+	}
+
+	.lede {
+		max-width: 36rem;
+		margin-top: 1rem;
+		font-size: 1.05rem;
+		line-height: 1.55;
+		color: var(--color-text-muted);
+	}
+
+	.hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem;
+		margin-top: 1.5rem;
+	}
+
+	.pill {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.9rem;
+		padding: 0.65rem 1.05rem;
+		background: #1e2926;
+		color: #f4efe6;
+		text-align: center;
+		line-height: 1.25;
+	}
+
+	.pill--ghost {
+		background: transparent;
+		color: #1e2926;
+		border: 1px solid #1e2926;
+	}
+
+	.pill--light {
+		background: #f4efe6;
+		color: #1e2926;
+	}
+
+	.pill--line {
+		background: transparent;
+		color: #f4efe6;
+		border: 1px solid color-mix(in srgb, #f4efe6 70%, transparent);
+	}
+
+	.block {
+		padding: clamp(3.5rem, 8vw, 6.5rem) clamp(1.25rem, 4vw, 4rem);
+	}
+
+	.block--paper {
+		background: var(--color-surface);
+	}
+
+	.block--tight {
+		padding-bottom: 0;
+	}
+
+	.block__head h2 {
+		font-size: clamp(2.4rem, 5vw, 4rem);
+		max-width: 14ch;
+	}
+
+	.index {
+		list-style: none;
+		margin: 2.5rem 0 0;
+		padding: 0;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.index a {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.9rem 1rem;
+		align-items: center;
+		padding: 1.15rem 0;
+		border-top: 1px solid var(--color-border);
+		color: inherit;
+	}
+
+	.index__num {
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
+		color: var(--color-secondary);
+	}
+
+	.index__copy {
+		display: grid;
+		gap: 0.35rem;
+	}
+
+	.index__title {
+		font-family: 'Instrument Serif', Georgia, serif;
+		font-size: clamp(1.7rem, 3vw, 2.4rem);
+		line-height: 1;
+	}
+
+	.index__text {
+		color: var(--color-text-muted);
+		line-height: 1.45;
+	}
+
+	:global(.index__photo) {
+		grid-column: 1 / -1;
+		width: 100%;
+		height: 12rem;
+		object-fit: cover;
+	}
+
+	.index a:hover .index__title {
+		font-style: italic;
+	}
+
+	.manifest {
+		display: grid;
+		gap: 2rem;
+	}
+
+	.manifest__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.manifest__list li {
+		padding: 1.35rem 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.manifest__list h3 {
+		font-size: clamp(1.8rem, 3vw, 2.5rem);
+		font-style: italic;
+		margin-bottom: 0.55rem;
+	}
+
+	.manifest__list p {
+		max-width: 36rem;
+		color: var(--color-text-muted);
+		line-height: 1.5;
+	}
+
+	.about {
+		display: grid;
+		gap: 1.75rem;
+	}
+
+	:global(.about__photo) {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4 / 5;
+		object-fit: cover;
+	}
+
+	.sheet {
+		margin: 2rem 0 0;
+	}
+
+	.sheet div {
+		display: grid;
+		gap: 0.2rem;
+		padding: 0.9rem 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.sheet dt {
+		font-size: 0.7rem;
+		font-weight: 500;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.sheet dd {
+		margin: 0;
+		font-family: 'Instrument Serif', Georgia, serif;
+		font-size: 1.45rem;
+		line-height: 1.15;
+	}
+
+	.block__head--inset {
+		padding: 0 clamp(1.25rem, 4vw, 4rem);
+		margin-bottom: 2rem;
+	}
+
+	.block--tight {
+		padding-inline: 0;
+	}
+
+	.modes {
+		display: grid;
+	}
+
+	.mode {
+		min-height: 16rem;
+		padding: 2rem clamp(1.25rem, 4vw, 4rem);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.mode h3 {
+		font-size: clamp(2.6rem, 6vw, 4.2rem);
+		margin-bottom: 0.8rem;
+	}
+
+	.mode p {
+		max-width: 28rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
+	}
+
+	.mode--ink {
+		background: #1e2926;
+		color: #f4efe6;
+		border-top: 0;
+	}
+
+	.mode--ink p {
+		color: #ddd4c6;
+	}
+
+	.places {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.2rem 0;
+		list-style: none;
+		margin: 2rem 0 0;
+		padding: 0;
+	}
+
+	.places li {
+		font-family: 'Instrument Serif', Georgia, serif;
+		font-size: clamp(1.8rem, 4vw, 3rem);
+		line-height: 1.15;
+	}
+
+	.places li:first-child {
+		font-style: italic;
+	}
+
+	.places li:not(:last-child)::after {
+		content: ' · ';
+		font-style: normal;
+		color: var(--color-secondary);
+	}
+
+	.steps {
+		list-style: none;
+		margin: 2.5rem 0 0;
+		padding: 0;
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.steps li {
+		padding-top: 0.9rem;
+		border-top: 2px solid var(--color-primary);
+	}
+
+	.steps span {
+		display: block;
+		margin-bottom: 0.7rem;
+		font-size: 0.72rem;
+		letter-spacing: 0.14em;
+		color: var(--color-secondary);
+	}
+
+	.steps h3 {
+		font-size: 1.7rem;
+		font-style: italic;
+		margin-bottom: 0.45rem;
+	}
+
+	.steps p {
+		color: var(--color-text-muted);
+		line-height: 1.45;
+	}
+
+	.faq {
+		margin-top: 1.5rem;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.faq details {
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.faq summary {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.15rem 0;
+		cursor: pointer;
+		font-family: 'Instrument Serif', Georgia, serif;
+		font-size: clamp(1.25rem, 2vw, 1.6rem);
+		line-height: 1.2;
+		list-style: none;
+	}
+
+	.faq summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.faq summary::after {
+		content: '+';
+		font-family: 'Instrument Sans', system-ui, sans-serif;
+		font-size: 1.3rem;
+		line-height: 1;
+	}
+
+	.faq details[open] summary::after {
+		content: '–';
+	}
+
+	.faq details p {
+		max-width: 42rem;
+		padding: 0 0 1.2rem;
+		color: var(--color-text-muted);
+		line-height: 1.55;
+	}
+
+	.offer {
+		padding: clamp(3.5rem, 8vw, 6rem) clamp(1.25rem, 4vw, 4rem);
+		background: #1e2926;
+		color: #f4efe6;
+	}
+
+	.offer .kicker {
+		color: #e2c2b0;
+	}
+
+	.offer h2 {
+		font-size: clamp(2.2rem, 5vw, 3.8rem);
+		max-width: 16em;
+	}
+
+	.offer p {
+		max-width: 38rem;
+		margin-top: 1rem;
+		line-height: 1.55;
+		color: #ddd4c6;
+	}
+
+	.contact {
+		display: grid;
+		gap: 2.5rem;
+	}
+
+	.facts {
+		align-self: start;
+		padding: 1.5rem;
+		background: var(--color-surface);
+	}
+
+	.facts h3 {
+		font-size: 2rem;
+		font-style: italic;
+		margin-bottom: 1rem;
+	}
+
+	.facts dl {
+		margin: 0;
+	}
+
+	.facts div {
+		padding: 0.75rem 0;
+		border-top: 1px solid var(--color-border);
+	}
+
+	.facts dt {
+		font-size: 0.7rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.facts dd {
+		margin: 0.15rem 0 0;
+		font-family: 'Instrument Serif', Georgia, serif;
+		font-size: 1.25rem;
+	}
+
+	:global(.contact__map) {
+		margin-top: 2rem;
+	}
+
+	.colophon {
+		display: grid;
+		gap: 0.8rem;
+		padding: 1.5rem clamp(1.25rem, 4vw, 4rem) 2.5rem;
+		border-top: 1px solid var(--color-border);
+		font-size: 0.85rem;
+		color: var(--color-text-muted);
+	}
+
+	.colophon ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.colophon a {
+		text-decoration: underline;
+		text-underline-offset: 0.18em;
+	}
+
+	@media (min-width: 760px) {
+		.index a {
+			grid-template-columns: 2.5rem minmax(0, 1fr) 11rem;
+		}
+
+		:global(.index__photo) {
+			grid-column: auto;
+			height: 7.2rem;
+		}
+
+		.sheet div {
+			grid-template-columns: 9.5rem 1fr;
+			align-items: baseline;
+		}
+
+		.modes {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.mode {
+			border-top: 0;
+			min-height: 22rem;
+		}
+
+		.steps {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 960px) {
+		.top,
+		.scrim {
+			display: none;
+		}
+
+		.rail {
+			width: 17rem;
+			transform: none;
+		}
+
+		.hero {
+			display: grid;
+			align-items: end;
+			min-height: 100dvh;
+		}
+
+		:global(.hero__media) {
+			position: absolute;
+			inset: 0;
+			height: 100%;
+		}
+
+		.hero__panel {
+			width: min(40rem, calc(100% - 4rem));
+			margin: 10vh 6vw 8vh;
+			padding: 2rem 2rem 1.7rem;
+			background: color-mix(in srgb, var(--color-background) 92%, transparent);
+		}
+
+		.manifest,
+		.about,
+		.contact {
+			grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+			gap: clamp(2rem, 4vw, 4.5rem);
+			align-items: start;
+		}
+
+		.manifest .block__head {
+			position: sticky;
+			top: 2rem;
+		}
+	}
+</style>

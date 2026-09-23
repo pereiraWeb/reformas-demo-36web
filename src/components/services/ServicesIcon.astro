@@ -5,19 +5,38 @@ import SectionHeading from '../ui/SectionHeading.astro';
 import { services, servicesContent, getServiceHref } from '../../config/servicesContent';
 import { backgroundStyle, type BackgroundProps } from '../../lib/background';
 
+export interface ServicesIconItem {
+	title: string;
+	description: string;
+	icon?: string;
+	href?: string;
+}
+
 export interface Props extends BackgroundProps {
 	eyebrow?: string;
 	title?: string;
 	description?: string;
+	/** When set, replaces the global `services` list. Omit to keep the starter content. */
+	items?: ServicesIconItem[];
 }
 
 const {
 	eyebrow = servicesContent.icon.eyebrow,
 	title = servicesContent.icon.title,
 	description = servicesContent.icon.description,
+	items,
 	backgroundColor,
 	backgroundImage,
 } = Astro.props;
+
+const iconItems: ServicesIconItem[] =
+	items ??
+	services.map((service) => ({
+		title: service.title,
+		description: service.description,
+		icon: service.icon,
+		href: getServiceHref(service),
+	}));
 
 const style = backgroundStyle({ backgroundColor, backgroundImage });
 ---
@@ -32,14 +51,9 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 			/>
 		</div>
 		<ul class="services-icon__list">
-			{services.map((service) => (
+			{iconItems.map((item) => (
 				<li>
-					<CardIcon
-						title={service.title}
-						description={service.description}
-						icon={service.icon}
-						href={getServiceHref(service)}
-					/>
+					<CardIcon title={item.title} description={item.description} icon={item.icon} href={item.href} />
 				</li>
 			))}
 		</ul>

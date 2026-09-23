@@ -4,7 +4,7 @@ import Button from '../ui/Button.astro';
 import IconLinks, { type IconLinkItem } from '../ui/IconLinks.astro';
 import BrandMark from '../ui/BrandMark.astro';
 import { business } from '../../config/business';
-import { mainNavigation } from '../../config/navigation';
+import { mainNavigation, type NavItem } from '../../config/navigation';
 import { headerContent } from '../../config/headerContent';
 import { getHeaderIconLinks } from '../../lib/iconLinks';
 import { backgroundStyle, type BackgroundProps } from '../../lib/background';
@@ -15,6 +15,12 @@ export interface Props extends BackgroundProps {
 	ctaHref?: string;
 	logo?: string;
 	logoAlt?: string;
+	/** Text brand when `logo` is empty. Defaults to `business.name` inside `BrandMark`. */
+	brandName?: string;
+	/** Logo link target. Defaults to the site root. */
+	brandHref?: string;
+	/** Main navigation. Defaults to `mainNavigation`. */
+	items?: NavItem[];
 	/** Social/contact/WhatsApp icons shown next to the CTA button. Defaults to configured social links + WhatsApp. */
 	iconLinks?: IconLinkItem[];
 }
@@ -24,6 +30,9 @@ const {
 	ctaHref = headerContent.cta.ctaHref,
 	logo = business.logo,
 	logoAlt = business.name,
+	brandName,
+	brandHref = '/',
+	items = mainNavigation,
 	iconLinks = getHeaderIconLinks(),
 	backgroundColor,
 	backgroundImage,
@@ -33,11 +42,11 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 
 <header class="header-cta" style={style}>
 	<Container class="header-cta__inner">
-		<a href="/" class="header-cta__brand">
-			<BrandMark logo={logo} logoAlt={logoAlt} class="header-cta__logo" />
+		<a href={brandHref} class="header-cta__brand">
+			<BrandMark logo={logo} logoAlt={logoAlt} name={brandName} class={logo ? 'header-cta__logo' : 'header-cta__name'} />
 		</a>
 		<nav class="header-cta__nav" aria-label="Navegación principal">
-			<NavMenu items={mainNavigation} align="center" />
+			<NavMenu items={items} align="center" />
 		</nav>
 		<div class="header-cta__actions">
 			<IconLinks items={iconLinks} size={18} class="header-cta__icon-links" />
@@ -68,6 +77,12 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 	:global(.header-cta__logo) {
 		height: 2.25rem;
 		width: auto;
+	}
+
+	:global(.header-cta__name) {
+		font-weight: 700;
+		font-size: 1.05rem;
+		line-height: 1.2;
 	}
 
 	.header-cta__nav {

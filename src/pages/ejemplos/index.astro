@@ -1,0 +1,85 @@
+---
+import BusinessLayout from '../../layouts/BusinessLayout.astro';
+import Section from '../../components/ui/Section.astro';
+import CardBasic from '../../components/cards/CardBasic.astro';
+import { CITY_CONFIG, configuredCitySlugs } from '../../config/localDemos/cities';
+---
+
+<BusinessLayout
+	title="Ejemplos comerciales"
+	description="Demos sectoriales de 36web. Son ejemplos comerciales, no proyectos realizados para clientes."
+	noindex
+	nofollow
+>
+	<Section class="ejemplos-hero" backgroundColor="var(--color-surface)" narrowContainer>
+		<p class="ejemplos-hero__eyebrow">36web</p>
+		<h1 class="ejemplos-hero__title">Ejemplos comerciales</h1>
+		<p class="ejemplos-hero__description">
+			Cada demo usa la misma página para todos los municipios. El negocio, los datos y las fotos son de ejemplo.
+			No son proyectos entregados a un cliente.
+		</p>
+	</Section>
+
+	<Section>
+		<ul class="ejemplos-list">
+			{
+				configuredCitySlugs.map((slug) => {
+					const city = CITY_CONFIG[slug];
+					return (
+						<>
+							<li>
+								<CardBasic
+									title={`Reparaciones en ${city.ciudad}`}
+									description={`${city.ciudad} y ${city.area}.`}
+									href={`/${slug}`}
+								/>
+							</li>
+							<li>
+								<CardBasic
+									title={`Psicología en ${city.ciudad}`}
+									description={`${city.ciudad} y ${city.area}.`}
+									href={`/psicologia/${slug}`}
+								/>
+							</li>
+						</>
+					);
+				})
+			}
+		</ul>
+	</Section>
+</BusinessLayout>
+
+<style>
+	:global(.ejemplos-hero) {
+		padding-block: var(--spacing-xl);
+		text-align: center;
+	}
+
+	.ejemplos-hero__eyebrow {
+		margin: 0 0 var(--spacing-xs);
+		color: var(--color-primary);
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	.ejemplos-hero__title {
+		font-size: clamp(2rem, 4vw, 2.75rem);
+	}
+
+	.ejemplos-hero__description {
+		max-width: 40rem;
+		margin-inline: auto;
+		color: var(--color-text-muted);
+	}
+
+	.ejemplos-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: var(--spacing-md);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+</style>

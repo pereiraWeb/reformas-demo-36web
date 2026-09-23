@@ -1,6 +1,6 @@
 ---
 import Icon from '../ui/Icon.astro';
-import { business } from '../../config/business';
+import { business, type BusinessHours } from '../../config/business';
 import { contactContent } from '../../config/contactContent';
 
 /**
@@ -12,9 +12,30 @@ import { contactContent } from '../../config/contactContent';
 export interface Props {
 	title?: string;
 	showHours?: boolean;
+	email?: string;
+	phone?: string;
+	/** Single-line address. Omit to use the structured address from `business.ts`. */
+	address?: string;
+	hours?: BusinessHours[];
+	/** When false, email and phone render as text, without `mailto:` / `tel:` links. */
+	linkEmail?: boolean;
+	linkPhone?: boolean;
 }
 
-const { title = contactContent.split.title, showHours = true } = Astro.props;
+const {
+	title = contactContent.split.title,
+	showHours = true,
+	email = business.email,
+	phone = business.phone,
+	address,
+	hours = business.hours,
+	linkEmail = true,
+	linkPhone = true,
+} = Astro.props;
+
+const addressLine =
+	address ??
+	`${business.address.street}, ${business.address.city}, ${business.address.region} ${business.address.postalCode}, ${business.address.country}`;
 ---
 
 <article class="card-contact">
@@ -22,24 +43,25 @@ const { title = contactContent.split.title, showHours = true } = Astro.props;
 	<dl class="card-contact__details">
 		<div class="card-contact__row">
 			<dt><Icon name="mail" label={contactContent.split.emailLabel} class="card-contact__icon" /></dt>
-			<dd><a href={`mailto:${business.email}`}>{business.email}</a></dd>
+			<dd>
+				{linkEmail ? <a href={`mailto:${email}`}>{email}</a> : email}
+			</dd>
 		</div>
 		<div class="card-contact__row">
 			<dt><Icon name="phone" label={contactContent.split.phoneLabel} class="card-contact__icon" /></dt>
-			<dd><a href={`tel:${business.phone}`}>{business.phone}</a></dd>
+			<dd>
+				{linkPhone ? <a href={`tel:${phone}`}>{phone}</a> : phone}
+			</dd>
 		</div>
 		<div class="card-contact__row">
 			<dt><Icon name="map-pin" label={contactContent.split.addressLabel} class="card-contact__icon" /></dt>
-			<dd>
-				{business.address.street}, {business.address.city}, {business.address.region}{' '}
-				{business.address.postalCode}, {business.address.country}
-			</dd>
+			<dd>{addressLine}</dd>
 		</div>
-		{showHours && business.hours.length > 0 && (
+		{showHours && hours.length > 0 && (
 			<div class="card-contact__row">
 				<dt><Icon name="clock" label={contactContent.split.hoursLabel} class="card-contact__icon" /></dt>
 				<dd class="card-contact__hours">
-					{business.hours.map((entry) => (
+					{hours.map((entry) => (
 						<p>
 							{entry.days}: {entry.hours}
 						</p>

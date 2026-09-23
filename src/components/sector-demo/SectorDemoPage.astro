@@ -1,0 +1,338 @@
+---
+import BusinessLayout from '../../layouts/BusinessLayout.astro';
+import HeaderCta from '../header/HeaderCta.astro';
+import FooterColumns from '../footer/FooterColumns.astro';
+import HeroSplit from '../hero/HeroSplit.astro';
+import ServicesShowcase from '../services/ServicesShowcase.astro';
+import ServicesIcon from '../services/ServicesIcon.astro';
+import FaqAccordion from '../faq/FaqAccordion.astro';
+import FaqSchema from '../seo/FaqSchema.astro';
+import CtaCentered from '../cta/CtaCentered.astro';
+import ContactSplit from '../contact/ContactSplit.astro';
+import Container from '../ui/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import ResponsiveImage from '../media/ResponsiveImage.astro';
+import SectorDemoNotice from './SectorDemoNotice.astro';
+import type { SectorDemoConfig, SectorDemoSection } from '../../config/sectorDemos/types';
+
+export interface Props {
+	demo: SectorDemoConfig;
+	/** URL of this rendering. City demos use `/${slug}` rather than `/ejemplos/...`. */
+	pagePath?: string;
+}
+
+const { demo, pagePath = `/ejemplos/${demo.slug}` } = Astro.props;
+
+const bodyStyle = [
+	`--color-primary: ${demo.theme.primary}`,
+	`--color-secondary: ${demo.theme.secondary}`,
+	`--color-surface: ${demo.theme.surface}`,
+	`--color-text: ${demo.theme.text}`,
+	`--color-border: ${demo.theme.border}`,
+	demo.theme.background ? `--color-background: ${demo.theme.background}` : '',
+].filter(Boolean).join('; ');
+
+const sectionOrder: SectorDemoSection[] = demo.sectionOrder ?? [
+	'services',
+	'zones',
+	'projects',
+	'advantages',
+	'process',
+	'faq',
+	'offer',
+	'contact',
+];
+---
+
+<BusinessLayout
+	title={demo.seo.title}
+	description={demo.seo.description}
+	siteName={demo.identity.name}
+	noindex
+	nofollow
+	image={{ src: demo.seo.image, alt: demo.seo.imageAlt, width: 1600, height: 1200 }}
+	bodyStyle={bodyStyle}
+	showWhatsapp={false}
+	includeOrganizationSchema={false}
+>
+	<HeaderCta
+		slot="header"
+		logo=""
+		brandName={demo.identity.name}
+		brandHref={pagePath}
+		items={demo.nav}
+		iconLinks={[]}
+		ctaText={demo.headerCta.text}
+		ctaHref={demo.headerCta.href}
+		backgroundColor="var(--color-background)"
+	/>
+	<FooterColumns
+		slot="footer"
+		logo=""
+		brandName={demo.identity.name}
+		brandHref={pagePath}
+		tagline={demo.identity.tagline}
+		email={demo.identity.email}
+		phone={demo.identity.phone}
+		location={demo.identity.location}
+		items={demo.footer.links}
+		linksHeading="Secciones"
+		contactHeading="Contacto"
+		companyHeading="Información"
+		copyright={demo.footer.copyright}
+		showAgencyCredit={false}
+		backgroundColor="var(--color-surface)"
+	/>
+
+	<FaqSchema items={demo.faq.items} />
+	<SectorDemoNotice text={demo.notice.text} ctaLabel={demo.notice.ctaLabel} ctaHref={demo.notice.ctaHref} />
+
+	<HeroSplit
+		eyebrow={demo.hero.eyebrow}
+		title={demo.hero.title}
+		description={demo.hero.description}
+		image={demo.hero.image}
+		imageAlt={demo.hero.imageAlt}
+		primaryCtaText={demo.hero.primaryCta.text}
+		primaryCtaHref={demo.hero.primaryCta.href}
+		secondaryCtaText={demo.hero.secondaryCta.text}
+		secondaryCtaHref={demo.hero.secondaryCta.href}
+		height="auto"
+		backgroundColor="var(--color-surface)"
+	/>
+
+	{
+		sectionOrder.map((key) => {
+			if (key === 'services') {
+				return (
+					<div id={demo.services.id}>
+						<ServicesShowcase
+							eyebrow={demo.services.eyebrow}
+							title={demo.services.title}
+							description={demo.services.description}
+							items={demo.services.items}
+							backgroundColor="var(--color-background)"
+						/>
+					</div>
+				);
+			}
+			if (key === 'advantages') {
+				return (
+					<div id={demo.advantages.id}>
+						<ServicesIcon
+							eyebrow={demo.advantages.eyebrow}
+							title={demo.advantages.title}
+							description={demo.advantages.description}
+							items={demo.advantages.items}
+							backgroundColor="var(--color-surface)"
+						/>
+					</div>
+				);
+			}
+			if (key === 'about' && demo.about) {
+				return (
+					<section id={demo.about.id} class="sector-about">
+						<Container>
+							<div class="sector-about__grid">
+								<ResponsiveImage
+									class="sector-about__image"
+									src={demo.about.image}
+									alt={demo.about.imageAlt}
+									width={1280}
+									height={1280}
+								/>
+								<div>
+									<SectionHeading
+										eyebrow={demo.about.eyebrow}
+										title={demo.about.title}
+										description={demo.about.description}
+									/>
+									<dl class="sector-about__fields">
+										{demo.about.fields.map((field) => (
+											<div>
+												<dt>{field.label}</dt>
+												<dd>{field.value}</dd>
+											</div>
+										))}
+									</dl>
+								</div>
+							</div>
+						</Container>
+					</section>
+				);
+			}
+			if (key === 'modalities' && demo.modalities) {
+				return (
+					<div id={demo.modalities.id}>
+						<ServicesIcon
+							eyebrow={demo.modalities.eyebrow}
+							title={demo.modalities.title}
+							description={demo.modalities.description}
+							items={demo.modalities.items}
+							backgroundColor="var(--color-background)"
+						/>
+					</div>
+				);
+			}
+			if (key === 'zones') {
+				return (
+					<div id={demo.zones.id}>
+						<ServicesIcon
+							eyebrow={demo.zones.eyebrow}
+							title={demo.zones.title}
+							description={demo.zones.description}
+							items={demo.zones.items}
+							backgroundColor="var(--color-surface)"
+						/>
+					</div>
+				);
+			}
+			if (key === 'projects' && demo.projects) {
+				return (
+					<div id={demo.projects.id}>
+						<ServicesShowcase
+							eyebrow={demo.projects.eyebrow}
+							title={demo.projects.title}
+							description={demo.projects.description}
+							items={demo.projects.items}
+							backgroundColor="var(--color-background)"
+						/>
+					</div>
+				);
+			}
+			if (key === 'process') {
+				return (
+					<div id={demo.process.id}>
+						<ServicesIcon
+							eyebrow={demo.process.eyebrow}
+							title={demo.process.title}
+							description={demo.process.description}
+							items={demo.process.items}
+							backgroundColor="var(--color-background)"
+						/>
+					</div>
+				);
+			}
+			if (key === 'faq') {
+				return (
+					<div id={demo.faq.id}>
+						<FaqAccordion
+							eyebrow={demo.faq.eyebrow}
+							title={demo.faq.title}
+							description={demo.faq.description}
+							items={demo.faq.items}
+							backgroundColor="var(--color-surface)"
+						/>
+					</div>
+				);
+			}
+			if (key === 'offer') {
+				return (
+					<div id={demo.offer.id}>
+						<CtaCentered
+							eyebrow={demo.offer.eyebrow}
+							title={demo.offer.title}
+							description={demo.offer.description}
+							ctaText={demo.offer.primary.text}
+							ctaHref={demo.offer.primary.href}
+							ctaTarget="_blank"
+							secondaryCtaText={demo.offer.secondary.text}
+							secondaryCtaHref={demo.offer.secondary.href}
+							secondaryCtaTarget="_blank"
+						/>
+					</div>
+				);
+			}
+			if (key === 'contact') {
+				return (
+					<div id={demo.contact.id}>
+						<ContactSplit
+							eyebrow={demo.contact.eyebrow}
+							heading={demo.contact.heading}
+							description={demo.contact.description}
+							title={demo.contact.cardTitle}
+							submitText={demo.contact.submitText}
+							email={demo.identity.email}
+							phone={demo.identity.phone}
+							address={demo.identity.address}
+							hours={demo.identity.hours}
+							linkEmail={false}
+							linkPhone={false}
+							showMap={Boolean(demo.identity.mapAddress)}
+							mapAddress={demo.identity.mapAddress}
+							mapTitle={demo.identity.mapTitle}
+							successRedirect=""
+							backgroundColor="var(--color-background)"
+						/>
+					</div>
+				);
+			}
+			return null;
+		})
+	}
+</BusinessLayout>
+
+<style>
+	:global(#quieres-una-web .cta-centered__description) {
+		max-width: 42rem;
+	}
+
+	:global(#quieres-una-web .cta-centered__actions .btn) {
+		white-space: normal;
+		max-width: 22rem;
+		text-align: center;
+	}
+
+	.sector-about {
+		padding-block: var(--spacing-xl);
+		background-color: var(--color-surface);
+	}
+
+	.sector-about__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+		gap: var(--spacing-xl);
+		align-items: center;
+	}
+
+	:global(.sector-about__image) {
+		width: 100%;
+		height: auto;
+		border-radius: var(--radius-base);
+		object-fit: cover;
+		aspect-ratio: 4 / 5;
+	}
+
+	.sector-about__fields {
+		display: grid;
+		gap: var(--spacing-sm);
+		margin: var(--spacing-lg) 0 0;
+	}
+
+	.sector-about__fields div {
+		display: grid;
+		gap: 0.15rem;
+		padding-top: var(--spacing-sm);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.sector-about__fields dt {
+		margin: 0;
+		font-size: 0.75rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.sector-about__fields dd {
+		margin: 0;
+	}
+
+	@media (max-width: 800px) {
+		.sector-about__grid {
+			grid-template-columns: 1fr;
+			gap: var(--spacing-lg);
+		}
+	}
+</style>

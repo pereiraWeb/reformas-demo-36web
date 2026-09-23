@@ -12,12 +12,12 @@ export interface AgencyCreditContent {
 /**
  * Editable copy for `src/components/ui/AgencyCredit.astro`, the small
  * attribution line shown in every footer variant. The link is rendered as
- * `linkPrefix + linkMiddle + linkSuffix` (e.g. ">pereiraweb.es_").
+ * `linkPrefix + linkMiddle + linkSuffix` (e.g. ">36web.es_").
  */
 export const agencyCreditContent: AgencyCreditContent = {
   text: 'Página creada con el plan WEB 360 de',
   linkPrefix: '>',
-  linkMiddle: 'pereiraweb',
+  linkMiddle: '36web',
   linkSuffix: '.es_',
-  href: 'https://pereiraweb.es/web-profesional-360',
+  href: 'https://36web.es/diseno-web/#contacto',
 };

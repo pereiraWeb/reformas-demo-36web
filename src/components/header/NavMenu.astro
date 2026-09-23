@@ -158,15 +158,17 @@ function isActive(href: string): boolean {
 		cursor: pointer;
 	}
 
-	.nav-menu__toggle-icon--close {
+	/* Icons render inside `Icon.astro`, so these selectors must cross the
+	   component boundary. Closed: hamburger. Open: X. */
+	.nav-menu__toggle :global(.nav-menu__toggle-icon--close) {
 		display: none;
 	}
 
-	.nav-menu-root--open .nav-menu__toggle-icon--open {
+	.nav-menu-root--open .nav-menu__toggle :global(.nav-menu__toggle-icon--open) {
 		display: none;
 	}
 
-	.nav-menu-root--open .nav-menu__toggle-icon--close {
+	.nav-menu-root--open .nav-menu__toggle :global(.nav-menu__toggle-icon--close) {
 		display: block;
 	}
 

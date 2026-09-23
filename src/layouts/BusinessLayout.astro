@@ -28,9 +28,19 @@ import '../styles/global.css';
  *
  * Omit either slot to keep the defaults below (`HeaderSimple`/`FooterColumns`).
  */
-export interface Props extends SeoProps {}
+export interface Props extends SeoProps {
+	/** Inline style on `<body>`, used to scope a page's design tokens (for example a sector demo palette). */
+	bodyStyle?: string;
+	/** Floating WhatsApp button. Defaults to on. Turn off when the page has no real phone number. */
+	showWhatsapp?: boolean;
+	/**
+	 * Site-wide Organization JSON-LD. Turn off on pages that must not be
+	 * described as the configured business (for example a fictional sector demo).
+	 */
+	includeOrganizationSchema?: boolean;
+}
 
-const seoProps = Astro.props;
+const { bodyStyle, showWhatsapp = true, includeOrganizationSchema = true } = Astro.props;
 ---
 
 <html lang={business.language}>
@@ -42,17 +52,17 @@ const seoProps = Astro.props;
 		<link rel="manifest" href="/site.webmanifest" />
 		<meta name="generator" content={Astro.generator} />
 
-		<SeoHead {...seoProps} />
-		<OrganizationSchema />
+		<SeoHead {...Astro.props} />
+		{includeOrganizationSchema && <OrganizationSchema />}
 	</head>
-	<body>
+	<body style={bodyStyle}>
 		<SkipLink />
 		<slot name="header"><HeaderSimple /></slot>
 		<main id="main-content">
 			<slot />
 		</main>
 		<slot name="footer"><FooterColumns /></slot>
-		<WhatsappButton />
+		{showWhatsapp && <WhatsappButton />}
 		<BackToTop />
 		<CookieConsent />
 

@@ -13,6 +13,8 @@ export interface Props extends BackgroundProps {
 	ctaHref?: string;
 	secondaryCtaText?: string;
 	secondaryCtaHref?: string;
+	ctaTarget?: string;
+	secondaryCtaTarget?: string;
 	/** Any valid CSS length (e.g. "auto", "320px", "50vh"). */
 	height?: string;
 }
@@ -25,6 +27,8 @@ const {
 	ctaHref = ctaContent.centered.ctaHref,
 	secondaryCtaText = ctaContent.centered.secondaryCtaText,
 	secondaryCtaHref = ctaContent.centered.secondaryCtaHref,
+	ctaTarget,
+	secondaryCtaTarget,
 	height = ctaContent.centered.height,
 	backgroundColor = 'var(--color-primary)',
 	backgroundImage,
@@ -44,8 +48,8 @@ const style = backgroundStyle({ backgroundColor, backgroundImage }, { '--cta-cen
 		descriptionClass="cta-centered__description"
 	/>
 		<div class="cta-centered__actions">
-			<Button href={ctaHref} variant="inverse" track="cta_click" trackLabel={ctaText}>{ctaText}</Button>
-			{secondaryCtaText && <Button href={secondaryCtaHref} variant="inverse-outline">{secondaryCtaText}</Button>}
+			<Button href={ctaHref} target={ctaTarget} variant="inverse" track="cta_click" trackLabel={ctaText}>{ctaText}</Button>
+			{secondaryCtaText && <Button href={secondaryCtaHref} target={secondaryCtaTarget} variant="inverse-outline">{secondaryCtaText}</Button>}
 		</div>
 	</Container>
 </section>

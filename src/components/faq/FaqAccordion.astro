@@ -2,19 +2,22 @@
 import { faqs, faqContent } from '../../config/faqContent';
 import { backgroundStyle, type BackgroundProps } from '../../lib/background';
 import Container from '../ui/Container.astro';
-import Accordion from '../ui/Accordion.astro';
+import Accordion, { type AccordionItem } from '../ui/Accordion.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 
 export interface Props extends BackgroundProps {
 	eyebrow?: string;
 	title?: string;
 	description?: string;
+	/** When set, replaces the global FAQ list. Omit to keep the starter content. */
+	items?: AccordionItem[];
 }
 
 const {
 	eyebrow = faqContent.accordion.eyebrow,
 	title = faqContent.accordion.title,
 	description = faqContent.accordion.description,
+	items = faqs,
 	backgroundColor,
 	backgroundImage,
 } = Astro.props;
@@ -31,7 +34,7 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 				description={description}
 			/>
 		</div>
-		<Accordion items={faqs} class="faq-accordion__list" />
+		<Accordion items={items} class="faq-accordion__list" />
 	</Container>
 </section>
 

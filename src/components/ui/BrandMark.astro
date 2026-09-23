@@ -15,6 +15,8 @@ export interface Props {
 	class?: string;
 	/** When there's no logo, render the business name as text instead of nothing. Defaults to `true` — set to `false` when the caller already shows the name elsewhere (e.g. next to a copyright notice). */
 	fallbackToText?: boolean;
+	/** Text used when there is no logo. Defaults to `business.name`. */
+	name?: string;
 	/** `"dark"` picks `business.logoDark` (falling back to `logo`/`business.logo` when unset) — use on a header/footer with a dark background. */
 	variant?: 'light' | 'dark';
 	width?: number;
@@ -28,6 +30,7 @@ const {
 	logoAlt = business.name,
 	class: className,
 	fallbackToText = true,
+	name = business.name,
 	width = business.logoWidth ?? 160,
 	height = business.logoHeight ?? 40,
 } = Astro.props;
@@ -46,6 +49,6 @@ const {
 			data-fallback-src={imageFallbacks.logo !== logo ? imageFallbacks.logo : undefined}
 		/>
 	) : (
-		fallbackToText && <span class={className}>{business.name}</span>
+		fallbackToText && <span class={className}>{name}</span>
 	)
 }

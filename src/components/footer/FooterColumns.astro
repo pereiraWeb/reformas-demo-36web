@@ -4,7 +4,7 @@ import Icon, { type IconName } from '../ui/Icon.astro';
 import AgencyCredit from '../ui/AgencyCredit.astro';
 import BrandMark from '../ui/BrandMark.astro';
 import { business } from '../../config/business';
-import { mainNavigation, legalNavigation } from '../../config/navigation';
+import { mainNavigation, legalNavigation, type NavItem } from '../../config/navigation';
 import { footerContent } from '../../config/footerContent';
 import { backgroundStyle, type BackgroundProps } from '../../lib/background';
 
@@ -14,6 +14,19 @@ export interface Props extends BackgroundProps {
 	contactHeading?: string;
 	logo?: string;
 	logoAlt?: string;
+	/** Text brand when `logo` is empty. Defaults to `business.name` inside `BrandMark`. */
+	brandName?: string;
+	brandHref?: string;
+	tagline?: string;
+	email?: string;
+	phone?: string;
+	location?: string;
+	/** Replaces the default English copyright line. */
+	copyright?: string;
+	/** The small agency line under the legal links. Defaults to on. */
+	showAgencyCredit?: boolean;
+	/** Link column. Defaults to `mainNavigation`. */
+	items?: NavItem[];
 }
 
 const {
@@ -22,6 +35,15 @@ const {
 	contactHeading = footerContent.columns.contactHeading,
 	logo = business.logo,
 	logoAlt = business.name,
+	brandName,
+	brandHref = '/',
+	tagline = business.tagline,
+	email = business.email,
+	phone = business.phone,
+	location = `${business.address.city}, ${business.address.country}`,
+	copyright,
+	showAgencyCredit = true,
+	items = mainNavigation,
 	backgroundColor,
 	backgroundImage,
 } = Astro.props;
@@ -34,25 +56,33 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 <footer class="footer-columns" style={style}>
 	<Container class="footer-columns__grid">
 		<div>
-			<a href="/" class="footer-columns__brand">
-				<BrandMark logo={logo} logoAlt={logoAlt} class="footer-columns__logo" />
+			<a href={brandHref} class="footer-columns__brand">
+				<BrandMark logo={logo} logoAlt={logoAlt} name={brandName} class={logo ? 'footer-columns__logo' : 'footer-columns__name'} />
 			</a>
-			<p class="footer-columns__tagline">{business.tagline}</p>
+			<p class="footer-columns__tagline">{tagline}</p>
 		</div>
 		<div>
 			<h3>{linksHeading}</h3>
 			<ul>
-				{mainNavigation.map((item) => (
-					<li><a href={item.href}>{item.label}</a></li>
+				{items.map((item) => (
+					<li>
+						<a
+							href={item.href}
+							target={item.href.startsWith('http') ? '_blank' : undefined}
+							rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+						>
+							{item.label}
+						</a>
+					</li>
 				))}
 			</ul>
 		</div>
 		<div>
 			<h3>{contactHeading}</h3>
 			<ul class="footer-columns__contact">
-				<li>{business.email}</li>
-				<li>{business.phone}</li>
-				<li>{business.address.city}, {business.address.country}</li>
+				<li>{email}</li>
+				<li>{phone}</li>
+				<li>{location}</li>
 			</ul>
 		</div>
 		<div>
@@ -77,13 +107,13 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 		</div>
 	</Container>
 	<Container class="footer-columns__bottom">
-		<p>&copy; {year} {business.legalName}. All rights reserved.</p>
+		<p>{copyright ?? `© ${year} ${business.legalName}. All rights reserved.`}</p>
 		<ul class="footer-columns__legal">
 			{legalNavigation.map((item) => (
 				<li><a href={item.href}>{item.label}</a></li>
 			))}
 		</ul>
-		<AgencyCredit />
+		{showAgencyCredit && <AgencyCredit />}
 	</Container>
 </footer>
 
@@ -111,6 +141,12 @@ const style = backgroundStyle({ backgroundColor, backgroundImage });
 	:global(.footer-columns__logo) {
 		height: 2rem;
 		width: auto;
+	}
+
+	:global(.footer-columns__name) {
+		font-weight: 700;
+		font-size: 1.05rem;
+		line-height: 1.2;
 	}
 
 	.footer-columns__tagline {

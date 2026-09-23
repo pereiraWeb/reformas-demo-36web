@@ -1,0 +1,17 @@
+---
+import PsicologiaStudio from '../../components/sector-demo/PsicologiaStudio.astro';
+import { buildPsicologiaDemo } from '../../config/localDemos/psicologia';
+
+/**
+ * On demand. The city name is read from the URL segment, so
+ * `/psicologia/getafe` is Getafe without adding it to a list.
+ * `noindex, nofollow` come from the shared layout. The route is not
+ * prerendered, so it stays out of the sitemap.
+ */
+export const prerender = false;
+
+const city = typeof Astro.params.city === 'string' ? Astro.params.city : '';
+const { demo, pagePath } = buildPsicologiaDemo(city);
+---
+
+<PsicologiaStudio demo={demo} pagePath={pagePath} />

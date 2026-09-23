@@ -37,6 +37,12 @@ export interface SeoProps {
   image?: SeoImage;
   /** Open Graph type. Defaults to `seoDefaults.defaultOgType`. */
   type?: 'website' | 'article' | 'profile';
+  /**
+   * Replaces `business.name` in the document title and `og:site_name`.
+   * Use it on pages that present another identity than the site-wide
+   * business (for example a sector demo).
+   */
+  siteName?: string;
 }
 
 export interface SeoMeta {
@@ -88,7 +94,7 @@ function guessImageMimeType(src: string): string {
  * carries over query params or a trailing slash.
  */
 export function getSeoMeta(pageUrl: URL, props: SeoProps): SeoMeta {
-  const { title, description, canonical, noindex = false, nofollow = false, image, type = seoDefaults.defaultOgType } = props;
+  const { title, description, canonical, noindex = false, nofollow = false, image, type = seoDefaults.defaultOgType, siteName = business.name } = props;
 
   const canonicalPath = canonical ? new URL(canonical, business.siteUrl).pathname : normalizePathname(pageUrl.pathname);
   const canonicalUrl = toAbsoluteUrl(normalizePathname(canonicalPath));
@@ -101,7 +107,7 @@ export function getSeoMeta(pageUrl: URL, props: SeoProps): SeoMeta {
   };
 
   return {
-    title: `${title} ${seoDefaults.titleSeparator} ${business.name}`,
+    title: `${title} ${seoDefaults.titleSeparator} ${siteName}`,
     description: description ?? business.description,
     canonical: canonicalUrl,
     robots: [noindex ? 'noindex' : 'index', nofollow ? 'nofollow' : 'follow'].join(', '),
@@ -114,7 +120,7 @@ export function getSeoMeta(pageUrl: URL, props: SeoProps): SeoMeta {
     },
     type,
     locale: OG_LOCALE,
-    siteName: business.name,
+    siteName,
     language: business.language,
   };
 }

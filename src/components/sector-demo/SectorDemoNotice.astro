@@ -1,0 +1,44 @@
+---
+import Container from '../ui/Container.astro';
+
+export interface Props {
+	text: string;
+	ctaLabel: string;
+	ctaHref: string;
+}
+
+const { text, ctaLabel, ctaHref } = Astro.props;
+---
+
+<div class="sector-notice">
+	<Container class="sector-notice__inner">
+		<p>
+			{text}{' '}
+			<a href={ctaHref} target="_blank" rel="noopener noreferrer">{ctaLabel}</a>
+		</p>
+	</Container>
+</div>
+
+<style>
+	.sector-notice {
+		background-color: var(--color-surface);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	:global(.sector-notice__inner) {
+		padding-block: 0.85rem;
+	}
+
+	.sector-notice p {
+		margin: 0;
+		color: var(--color-text);
+		font-size: 0.95rem;
+	}
+
+	.sector-notice a {
+		color: var(--color-primary);
+		font-weight: 700;
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+</style>
